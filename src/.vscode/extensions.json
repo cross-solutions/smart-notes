@@ -1,0 +1,16 @@
+{
+    "recommendations": [
+        "dart-code.flutter",
+        "dart-code.dart-code",
+        "nash.awesome-flutter-snippets",
+        "esskar.vscode-flutter-i18n-json",
+        "jeroen-meijer.pubspec-assist",
+        "gmlewis-vscode.flutter-stylizer",
+        "aaron-bond.better-comments",
+        "coenraads.bracket-pair-colorizer",
+        "ms-vsts.team",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens"
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "mainView": {
+        "counter" : "{counter}",
+        "currentCounterValue": "Aktueller zählerwert",
+        "decrementCounter": "Dekrementzähler",
+        "incrementCounter": "Inkrementzähler",
+        "goToSecondView": "Zur zweiten Ansicht wechseln",
+        "title": "Hauptansicht"
+    },
+    "secondView": {
+        "goBack": "Geh zurück",
+        "showAlertDialog": "Benachrichtigungsdialog anzeigen",
+        "showConfirmationDialog": "Bestätigungsdialog anzeigen",
+        "somethingIsLoading": "Etwas wird geladen",
+        "title": "Zweite Ansicht"
+    }
+}

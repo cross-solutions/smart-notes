@@ -1,0 +1,43 @@
+{
+	"folders": [
+		{
+			"path": "src"
+		},
+		{
+			"path": "scripts"
+		}
+	],
+	"settings": {
+		"launch": {
+			"configurations": [
+				{
+					"name": "App (Dev)",
+					"program": "app/lib/main_dev.dart",
+					"request": "launch",
+					"type": "dart"
+				},
+				{
+					"name": "App (Prod)",
+					"program": "app/lib/main_prod.dart",
+					"request": "launch",
+					"type": "dart"
+				}
+			],
+		},
+		"dart.lineLength": 120,
+		"files.exclude": {
+        		"**/.dart_tool": true,
+        		"**/.flutter-plugins": true,
+        		"**/.idea": true,
+        		"**/.metadata": true,
+        		"**/.packages": true,
+        		"**/*.iml": true,
+        		"**/build": true,
+        		"**/pubspec.lock": true,
+        		"**/.classpath": true,
+        		"**/.project": true,
+        		"**/.settings": true,
+        		"**/.factorypath": true
+			},
+	}
+}

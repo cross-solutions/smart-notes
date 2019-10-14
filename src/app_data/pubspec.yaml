@@ -1,0 +1,15 @@
+name: app_data
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  shared_preferences: ^0.5.3+4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^4.1.1
+  pedantic: 1.8.0+1

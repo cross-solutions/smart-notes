@@ -1,0 +1,22 @@
+name: app_util
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  appcenter: 0.2.1
+  appcenter_crashes: 0.2.1
+  appcenter_analytics: 0.2.1
+
+  app_constants:
+    path: '../app_constants'
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^4.1.1
+  pedantic: 1.8.0+1
