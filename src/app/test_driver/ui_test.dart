@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:app_constants/app_constants.dart';
+import 'package:app_common/app_common.dart';
 import 'package:flutter_driver/flutter_driver.dart';
 
 void main() {

@@ -6,8 +6,18 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  flutter:
+    sdk: flutter
   shared_preferences: ^0.5.3+4
+  google_sign_in: 4.0.7
 
+  app_business:
+    path: "../app_business"
+  app_common:
+    path: "../app_common"
+  app_util:
+    path: "../app_util"
+    
 dev_dependencies:
   flutter_test:
     sdk: flutter

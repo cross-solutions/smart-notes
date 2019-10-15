@@ -11,7 +11,7 @@ class SecondViewModel extends InitializableViewModel<GenericViewParameter> {
   final DialogService dialogService;
 
   @override
-  void init(GenericViewParameter parameter) {
+  void initParameter(GenericViewParameter parameter) {
     assert(parameter != null);
     message = parameter.message;
   }

@@ -1,22 +1,28 @@
 import 'package:app/services/navigation/navigation_service.dart';
 import 'package:app/view_models/view_models.dart';
-import 'package:app_constants/app_constants.dart';
+import 'package:app_business/app_business.dart';
+import 'package:app_common/app_common.dart';
 import 'package:app_util/app_util.dart';
 
 class AppViewModel extends BaseViewModel {
-  AppViewModel(this.analyticsService, this.navigationService) {
+  AppViewModel(this._authManager, this._analyticsService, this._navigationService) {
     _onInitialize();
   }
 
-  final AnalyticsService analyticsService;
-  final NavigationService navigationService;
+  final AuthManager _authManager;
+  final AnalyticsService _analyticsService;
+  final NavigationService _navigationService;
 
   Future<void> _onInitialize() async {
-    // Represents a initialization task
-    // Shows [SplashWidget] while this is running.
-    await analyticsService.start();
-    await Future.delayed(Duration(seconds: 1)); // Other tasks
+    await _analyticsService.start();
+    await Future.delayed(Duration(seconds: 1));
 
-    await navigationService.pushReplacement(ViewNames.mainView);
+    try {
+      await _authManager.ensureUserAlreadySignedIn();
+      await _navigationService.pushReplacement(ViewNames.homeView);
+    } on AuthException catch (aex) {
+      debugError(aex.message);
+      await _navigationService.pushReplacement(ViewNames.loginView);
+    }
   }
 }

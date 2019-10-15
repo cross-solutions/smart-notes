@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "234454236520",
+    "firebase_url": "https://enote-239506.firebaseio.com",
+    "project_id": "enote-239506",
+    "storage_bucket": "enote-239506.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234454236520:android:0afffb60c4147536",
+        "android_client_info": {
+          "package_name": "com.crosssolutions.enotes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234454236520-95depr684khc13ff4s11cpgj332bjo06.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.crosssolutions.enotes",
+            "certificate_hash": "c926296ae3c772c62fd8ede8caebb341b33154d5"
+          }
+        },
+        {
+          "client_id": "234454236520-aru93ch3kdeboahki2poo9is59pv5lms.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.crosssolutions.enotes",
+            "certificate_hash": "ae606713868298be6e7a6173642900471c9dab7d"
+          }
+        },
+        {
+          "client_id": "234454236520-3lmb0u9aasfdmntb6dkglqqb7m8817um.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdTbuuD-Yw_OgXe8RoirwMz55nL27MyeE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "234454236520-3lmb0u9aasfdmntb6dkglqqb7m8817um.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

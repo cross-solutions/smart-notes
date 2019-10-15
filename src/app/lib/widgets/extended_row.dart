@@ -46,7 +46,7 @@ class ExtendedRow extends StatelessWidget {
 
     children.forEach((w) {
       newChildren.add(w);
-      if (children.last != w) newChildren.add(SizedBox(height: spacing));
+      if (children.last != w) newChildren.add(SizedBox(width: spacing));
     });
 
     return newChildren;

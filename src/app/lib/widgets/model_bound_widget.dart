@@ -13,6 +13,13 @@ abstract class ModelBoundState<TWidget extends ModelBoundWidget, TViewModel exte
 
   @override
   @mustCallSuper
+  void initState() {
+    viewModel.init();
+    super.initState();
+  }
+
+  @override
+  @mustCallSuper
   void dispose() {
     viewModel.dispose();
     super.dispose();

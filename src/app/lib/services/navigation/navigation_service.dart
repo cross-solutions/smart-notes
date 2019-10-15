@@ -53,7 +53,7 @@ class NavigationServiceImpl implements NavigationService {
 
     if (view is ModelBoundWidget && view.viewModel is InitializableViewModel<T>) {
       InitializableViewModel<T> viewModel = view.viewModel;
-      viewModel.init(parameter);
+      viewModel.initParameter(parameter);
     }
 
     return view;

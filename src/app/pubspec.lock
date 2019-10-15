@@ -15,10 +15,10 @@ packages:
       relative: true
     source: path
     version: "1.0.0+1"
-  app_constants:
+  app_common:
     dependency: "direct main"
     description:
-      path: "..\\app_constants"
+      path: "..\\app_common"
       relative: true
     source: path
     version: "1.0.0+1"
@@ -154,6 +154,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  font_awesome_flutter:
+    dependency: "direct main"
+    description:
+      name: font_awesome_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "8.5.0"
   front_end:
     dependency: transitive
     description:
@@ -180,6 +187,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.7"
+  google_sign_in:
+    dependency: transitive
+    description:
+      name: google_sign_in
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.7"
   html:
     dependency: transitive
     description:
@@ -356,7 +370,7 @@ packages:
     source: hosted
     version: "1.0.1"
   shared_preferences:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: shared_preferences
       url: "https://pub.dartlang.org"

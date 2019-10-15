@@ -12,8 +12,8 @@ dependencies:
   appcenter_crashes: 0.2.1
   appcenter_analytics: 0.2.1
 
-  app_constants:
-    path: '../app_constants'
+  app_common:
+    path: "../app_common"
 
 dev_dependencies:
   flutter_test:
