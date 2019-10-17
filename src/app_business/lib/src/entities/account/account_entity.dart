@@ -4,12 +4,12 @@ class AccountEntity extends BaseEntity {
   AccountEntity({
     this.id,
     this.email,
-    this.displayName,
+    this.name,
     this.imageUrl,
   });
 
-  String id;
-  String email;
-  String displayName;
-  String imageUrl;
+  final String id;
+  final String email;
+  final String name;
+  final String imageUrl;
 }

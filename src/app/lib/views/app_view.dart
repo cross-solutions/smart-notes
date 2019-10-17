@@ -48,9 +48,12 @@ class _AppViewState extends ModelBoundState<AppView, AppViewModel> {
             900: Color(0xff331c00)
           },
         ),
+        
         buttonTheme: ButtonThemeData(
           shape: StadiumBorder(),
+          
         ),
+        
         colorScheme: ColorScheme(
           primary: Color(0xfffe8c00),
           primaryVariant: Color(0xff995400),
@@ -70,7 +73,13 @@ class _AppViewState extends ModelBoundState<AppView, AppViewModel> {
           display1: TextStyle(
             fontWeight: FontWeight.w600,
           ),
+          headline: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
           title: TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
+          body2: TextStyle(
             fontWeight: FontWeight.w600,
           ),
           button: TextStyle(

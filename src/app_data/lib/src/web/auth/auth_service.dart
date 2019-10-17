@@ -1,7 +1,8 @@
-import 'package:app_common/app_common.dart';
+import 'package:app_common/exceptions.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/services.dart';
 import 'package:app_util/app_util.dart';
+import 'package:googleapis/drive/v3.dart';
 
 abstract class AuthService {
   Future<GoogleSignInAccount> getCurrentlySignedInAccount();
@@ -15,6 +16,7 @@ class AuthServiceImpl extends AuthService {
   final _googleAuth = GoogleSignIn(
     scopes: <String>[
       'email',
+      DriveApi.DriveAppdataScope,
     ],
   );
 

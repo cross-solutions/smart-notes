@@ -16,6 +16,6 @@ class AccountManagerImpl implements AccountManager {
   @override
   void setCurrentAccount(AccountEntity account) {
     _currentAccount = account;
-    debugInfo('Signed-in as ${_currentAccount.email} (${_currentAccount.displayName})');
+    debugInfo('Signed-in as ${_currentAccount.email} (${_currentAccount.name})');
   }
 }

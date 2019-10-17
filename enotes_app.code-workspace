@@ -39,5 +39,6 @@
         		"**/.settings": true,
         		"**/.factorypath": true
 			},
+			"dart.flutterSdkPath": "C:\\Users\\CADN\\.flutter\\sdk",
 	}
 }

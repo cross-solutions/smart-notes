@@ -1,6 +1,7 @@
-import 'package:app_business/src/entities/entities.dart';
-import 'package:app_common/app_common.dart';
-import 'package:app_data/app_data.dart';
+
+
+import 'package:app_business/src/entities/settings/settings_entity.dart';
+import 'package:app_data/caching.dart';
 
 abstract class SettingsManager {
   Future<SettingsEntity> get currentSettings;
