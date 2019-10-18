@@ -21,6 +21,13 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
       child: ScopedModelDescendant<HomeViewModel>(
         builder: (context, child, viewModel) {
           return Scaffold(
+            floatingActionButton: FloatingActionButton(
+              elevation: 1.0,
+              backgroundColor: Colors.grey[200],
+              onPressed: viewModel.addTag,
+              child: Icon(MdiIcons.plus),
+              tooltip: 'Add Note',
+            ),
             body: SafeArea(
               child: Container(
                 child: ExtendedColumn(
@@ -72,9 +79,24 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Text(
-                        'Notes',
-                        style: Theme.of(context).textTheme.headline,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'Notes',
+                            style: Theme.of(context).textTheme.headline,
+                          ),
+                          FlatButton(
+                            child: ExtendedRow(
+                              spacing: 8.0,
+                              children: <Widget>[
+                                Icon(Icons.mode_edit),
+                                Text('Tags'),
+                              ],
+                            ),
+                            onPressed: () {},
+                          )
+                        ],
                       ),
                     ),
                     SingleChildScrollView(
@@ -87,18 +109,13 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            FloatingActionButton(
-                              elevation: 1.0,
-                              backgroundColor: Colors.grey[200],
-                              onPressed: viewModel.addTag,
-                              child: Icon(MdiIcons.plus),
-                              tooltip: 'Add Note',
+                            TagSelectorWidget(
+                              items: viewModel.tags,
                             ),
-                            TagSelectorWidget(items: viewModel.tags),
                           ],
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
