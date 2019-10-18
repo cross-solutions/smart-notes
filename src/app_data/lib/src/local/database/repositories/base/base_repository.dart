@@ -9,6 +9,8 @@ abstract class BaseRepository<T extends DataClass> extends DatabaseAccessor<ENot
 
   Future<List<T>> selectAll() => select(table).get();
 
+  Future<void> deleteAll() => delete(table).go();
+
   Future<T> selectSingle() => select(table).getSingle();
 
   Future<void> deleteItem(T dataObject) => delete(table).delete(dataObject as Insertable);
