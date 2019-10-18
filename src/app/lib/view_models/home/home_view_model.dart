@@ -1,5 +1,6 @@
 import 'package:app/models/models.dart';
 import 'package:app/services/services.dart';
+import 'package:app/view_models/home/notes_list_view_model.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
@@ -8,6 +9,7 @@ import 'package:uuid/uuid.dart';
 
 class HomeViewModel extends BaseViewModel {
   HomeViewModel(
+    this.notesListViewModel,
     AccountManager accountManager,
     this._authManager,
     this._tagsManager,
@@ -20,12 +22,13 @@ class HomeViewModel extends BaseViewModel {
     _tagsManager.watchTags().listen(_onTagsAdded);
   }
 
+  final NotesListViewModel notesListViewModel;
+  AccountEntity currentAccount;
+
   final AuthManager _authManager;
   final TagsManager _tagsManager;
   final NavigationService _navigationService;
   final DialogService _dialogService;
-
-  AccountEntity currentAccount;
 
   List<TagItemModel> _tags;
   List<TagItemModel> get tags => _tags;
@@ -61,5 +64,10 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  void _onTagsAdded(List<TagEntity> newTags) => tags = newTags.map((t) => TagItemModel(t.id, t.name)).toList();
+  void _onTagsAdded(List<TagEntity> newTags) {
+    final selectedTagModels = tags.where((t) => t.isSelected).toList();
+    final newTagModels = newTags.map((t) => TagItemModel(t.id, t.name)).toList();
+    selectedTagModels.forEach((t1) => newTagModels.firstWhere((t2) => t2.id == t1.id)..isSelected = true);
+    tags = newTagModels;
+  }
 }

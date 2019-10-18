@@ -5,6 +5,8 @@ import 'package:app_data/database.dart';
 abstract class TagsManager {
   Stream<List<TagEntity>> watchTags();
 
+  Future<TagEntity> getTag(String id);
+
   Future<void> addTag(TagEntity tag);
 
   Future<void> deleteTag(TagEntity tag);
@@ -33,5 +35,16 @@ class TagsManagerImpl implements TagsManager {
   Future<void> deleteTag(TagEntity tag) async {
     final tagDO = _tagMapper.toDataObject(tag);
     await _tagsRepository.deleteItem(tagDO);
+  }
+
+  @override
+  Future<TagEntity> getTag(String id) async {
+    final results = await _tagsRepository.selectAll();
+    final match = results.firstWhere((t) => t.id == id);
+
+    if (match != null)
+      return _tagMapper.toEntity(match);
+    else
+      return null;
   }
 }
