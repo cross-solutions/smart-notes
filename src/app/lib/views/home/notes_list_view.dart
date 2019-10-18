@@ -1,4 +1,5 @@
 import 'package:app/view_models/view_models.dart';
+import 'package:app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -18,8 +19,19 @@ class NotesListView extends StatelessWidget {
   }
 
   Widget _buildListView() {
-    return Center(
-      child: Text(viewModel.notes.length.toString()),
-    );
+    if (viewModel.notes.isEmpty) {
+      return Center(
+        child: ExtendedColumn(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text('You have no notes'),
+          ],
+        ),
+      );
+    } else {
+      return Center(
+        child: Text('You have ${viewModel.notes.length}'),
+      );
+    }
   }
 }
