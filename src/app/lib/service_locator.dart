@@ -34,8 +34,8 @@ class ServiceLocator {
       ..registerFactory<SecondViewModel>(() => SecondViewModel(i.get<NavigationService>(), i.get<DialogService>()))
       ..registerFactory<LoginViewModel>(
           () => LoginViewModel(i.get<AuthManager>(), i.get<NavigationService>(), i.get<DialogService>()))
-      ..registerFactory<HomeViewModel>(() => HomeViewModel(
-          i.get<AccountManager>(), i.get<AuthManager>(), i.get<NavigationService>(), i.get<DialogService>()))
+      ..registerFactory<HomeViewModel>(() => HomeViewModel(i.get<AccountManager>(), i.get<AuthManager>(),
+          i.get<TagsManager>(), i.get<NavigationService>(), i.get<DialogService>()))
 
       // Register Services
       ..registerSingleton<NavigationService>(NavigationServiceImpl())
@@ -45,10 +45,12 @@ class ServiceLocator {
       ..registerLazySingleton<AuthManager>(() => AuthManagerImpl(i.get<AccountManager>(), i.get<AuthService>(),
           i.get<AccountMapper>(), i.get<KeyStoreService>(), i.get<AccountRepository>()))
       ..registerLazySingleton<AccountManager>(() => AccountManagerImpl())
+      ..registerLazySingleton<TagsManager>(() => TagsManagerImpl(i.get<TagsRepository>(), i.get<TagMapper>()))
 
       // Register Mappers
       ..registerLazySingleton<GoogleAccountMapper>(() => GoogleAccountMapperImpl())
       ..registerLazySingleton<AccountMapper>(() => AccountMapperImpl(i.get<GoogleAccountMapper>()))
+      ..registerLazySingleton<TagMapper>(() => TagMapperImpl())
 
       // Register Data
       ..registerLazySingleton<ENotesDatabase>(() => ENotesDatabase())

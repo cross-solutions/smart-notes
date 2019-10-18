@@ -60,6 +60,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "234454236520-ge97rtbskdgpks13abocjvtdqd4s4fbr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.crosssolutions.enotes.hackathon",
+            "certificate_hash": "b76b29db55c180fbc0d807405fba23c0c0151266"
+          }
+        },
+        {
           "client_id": "234454236520-gka82h357i3m2lrq7m9dm7tqu07pjico.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
