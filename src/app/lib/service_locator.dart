@@ -22,16 +22,12 @@ class ServiceLocator {
     i
       // Register Views
       ..registerLazySingleton<AppView>(() => AppView(i.get<AppViewModel>()))
-      ..registerFactory<Widget>(() => MainView(i.get<MainViewModel>()), instanceName: ViewNames.mainView)
-      ..registerFactory<Widget>(() => SecondView(i.get<SecondViewModel>()), instanceName: ViewNames.secondView)
       ..registerFactory<Widget>(() => LoginView(i.get<LoginViewModel>()), instanceName: ViewNames.loginView)
       ..registerFactory<Widget>(() => HomeView(i.get<HomeViewModel>()), instanceName: ViewNames.homeView)
 
       // Register View Models
       ..registerLazySingleton<AppViewModel>(
           () => AppViewModel(i.get<AuthManager>(), i.get<AnalyticsService>(), i.get<NavigationService>()))
-      ..registerFactory<MainViewModel>(() => MainViewModel(i.get<NavigationService>()))
-      ..registerFactory<SecondViewModel>(() => SecondViewModel(i.get<NavigationService>(), i.get<DialogService>()))
       ..registerFactory<LoginViewModel>(() => LoginViewModel(
             i.get<AuthManager>(),
             i.get<NavigationService>(),
