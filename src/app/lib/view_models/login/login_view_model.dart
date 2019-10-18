@@ -1,8 +1,9 @@
 import 'package:app/services/services.dart';
 import 'package:app/view_models/view_models.dart';
-import 'package:app_business/app_business.dart';
+import 'package:app_business/managers.dart';
+import 'package:app_common/constants.dart';
+import 'package:app_common/exceptions.dart';
 import 'package:app_util/app_util.dart';
-import 'package:app_common/app_common.dart';
 
 class LoginViewModel extends BaseViewModel {
   LoginViewModel(this._authManager, this._navigationService, this._dialogService);

@@ -1,8 +1,8 @@
+import 'package:app_common/constants.dart';
 import 'package:appcenter/appcenter.dart';
 import 'package:appcenter_analytics/appcenter_analytics.dart';
 import 'package:appcenter_crashes/appcenter_crashes.dart';
 import 'package:flutter/foundation.dart';
-import 'package:app_common/app_common.dart';
 
 abstract class AnalyticsService {
   Future<void> start();

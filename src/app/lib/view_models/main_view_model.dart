@@ -1,10 +1,9 @@
 import 'package:app/models/models.dart';
 import 'package:app/services/services.dart';
 import 'package:app/view_models/view_models.dart';
-import 'package:app_common/app_common.dart';
+import 'package:app_common/constants.dart';
 
 class MainViewModel extends BaseViewModel {
-  // Assign [navigationService] directly from the constructor.
   MainViewModel(this.navigationService);
 
   final NavigationService navigationService;

@@ -1,7 +1,6 @@
 import 'package:app/view_models/login/login_view_model.dart';
 import 'package:app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class LoginView extends ModelBoundWidget<LoginViewModel> {
@@ -35,24 +34,24 @@ class _LoginViewState extends ModelBoundState<LoginView, LoginViewModel> {
                           'Welcome',
                           style: Theme.of(context).textTheme.display1,
                         ),
-                        Text('To get started, sign in using your Google Account.'),
+                        Text('To get started, sign-in using your Google Account.'),
                       ],
                     ),
                     ExtendedColumn(
                       spacing: 16.0,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        RaisedButton(
+                        GradientButton(
                           onPressed: viewModel.signInToGoogle,
                           child: ExtendedRow(
                             mainAxisSize: MainAxisSize.min,
                             spacing: 8.0,
                             children: <Widget>[
-                              Icon(
-                                FontAwesomeIcons.google,
-                                size: 16.0,
+                              Image.asset(
+                                'assets/graphics/ic_google.png',
+                                color: Colors.black,
                               ),
-                              Text('Sign In Using Google'),
+                              Text('GOOGLE SIGN IN'),
                             ],
                           ),
                         ),
@@ -84,13 +83,12 @@ class GradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      colorBrightness: Brightness.dark,
-      padding: EdgeInsets.all(0),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18.0))),
+      elevation: 1.0,
+      highlightElevation: 4.0,
+      padding: const EdgeInsets.all(0),
       onPressed: onPressed,
       child: Container(
         height: 36.0,
-        width: width,
         decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: <Color>[
@@ -99,8 +97,12 @@ class GradientButton extends StatelessWidget {
               ],
             ),
             borderRadius: BorderRadius.all(Radius.circular(18.0))),
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        child: child,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Flex(
+          children: <Widget>[child],
+          mainAxisAlignment: MainAxisAlignment.center,
+          direction: Axis.vertical,
+        ),
       ),
     );
   }

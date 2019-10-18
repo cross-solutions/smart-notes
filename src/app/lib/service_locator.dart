@@ -1,72 +1,72 @@
 import 'package:app/view_models/view_models.dart';
 import 'package:app/services/services.dart';
 import 'package:app/views/views.dart';
-import 'package:app_business/app_business.dart';
-import 'package:app_common/app_common.dart';
+import 'package:app_common/constants.dart';
 import 'package:app_util/app_util.dart';
+import 'package:app_data/caching.dart';
+import 'package:app_data/database.dart';
+import 'package:app_data/web_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:app_data/app_data.dart';
+import 'package:app_business/managers.dart';
+import 'package:app_business/mappers.dart';
 
 class ServiceLocator {
-  static final _i = GetIt.instance;
+  static bool configured = false;
 
-  /// Register our dependencies that we will use.
-  /// Because `dart:mirrors` (reflection) is disabled in Flutter,
-  /// it is best to use the *Service Locator* pattern.
+  @protected
+  static final i = GetIt.instance;
+
   static void configure() {
-    // Use cascade operation to chain calls from an object.
-    _i
+    assert(!configured);
+    i
       // Register Views
-      ..registerLazySingleton<AppView>(() => AppView(_i.get<AppViewModel>()))
-      ..registerFactory<Widget>(() => MainView(_i.get<MainViewModel>()), instanceName: ViewNames.mainView)
-      ..registerFactory<Widget>(() => SecondView(_i.get<SecondViewModel>()), instanceName: ViewNames.secondView)
-      ..registerFactory<Widget>(() => LoginView(_i.get<LoginViewModel>()), instanceName: ViewNames.loginView)
-      ..registerFactory<Widget>(() => HomeView(_i.get<HomeViewModel>()), instanceName: ViewNames.homeView)
+      ..registerLazySingleton<AppView>(() => AppView(i.get<AppViewModel>()))
+      ..registerFactory<Widget>(() => MainView(i.get<MainViewModel>()), instanceName: ViewNames.mainView)
+      ..registerFactory<Widget>(() => SecondView(i.get<SecondViewModel>()), instanceName: ViewNames.secondView)
+      ..registerFactory<Widget>(() => LoginView(i.get<LoginViewModel>()), instanceName: ViewNames.loginView)
+      ..registerFactory<Widget>(() => HomeView(i.get<HomeViewModel>()), instanceName: ViewNames.homeView)
 
       // Register View Models
-      ..registerLazySingleton<AppViewModel>(() => AppViewModel(
-            _i.get<AuthManager>(),
-            _i.get<AnalyticsService>(),
-            _i.get<NavigationService>(),
-          ))
-      ..registerFactory<MainViewModel>(() => MainViewModel(_i.get<NavigationService>()))
-      ..registerFactory<SecondViewModel>(() => SecondViewModel(_i.get<NavigationService>(), _i.get<DialogService>()))
-      ..registerFactory<LoginViewModel>(() => LoginViewModel(
-            _i.get<AuthManager>(),
-            _i.get<NavigationService>(),
-            _i.get<DialogService>(),
-          ))
+      ..registerLazySingleton<AppViewModel>(
+          () => AppViewModel(i.get<AuthManager>(), i.get<AnalyticsService>(), i.get<NavigationService>()))
+      ..registerFactory<MainViewModel>(() => MainViewModel(i.get<NavigationService>()))
+      ..registerFactory<SecondViewModel>(() => SecondViewModel(i.get<NavigationService>(), i.get<DialogService>()))
+      ..registerFactory<LoginViewModel>(
+          () => LoginViewModel(i.get<AuthManager>(), i.get<NavigationService>(), i.get<DialogService>()))
       ..registerFactory<HomeViewModel>(() => HomeViewModel(
-            _i.get<AccountManager>(),
-            _i.get<AuthManager>(),
-            _i.get<NavigationService>(),
-            _i.get<DialogService>(),
-          ))
+          i.get<AccountManager>(), i.get<AuthManager>(), i.get<NavigationService>(), i.get<DialogService>()))
 
       // Register Services
       ..registerSingleton<NavigationService>(NavigationServiceImpl())
       ..registerSingleton<DialogService>(DialogServiceImpl())
 
       // Register Managers
-      ..registerLazySingleton<AuthManager>(
-          () => AuthManagerImpl(_i.get<AccountManager>(), _i.get<AuthService>(), _i.get<AccountMapper>()))
+      ..registerLazySingleton<AuthManager>(() => AuthManagerImpl(i.get<AccountManager>(), i.get<AuthService>(),
+          i.get<AccountMapper>(), i.get<KeyStoreService>(), i.get<AccountRepository>()))
       ..registerLazySingleton<AccountManager>(() => AccountManagerImpl())
 
       // Register Mappers
-      ..registerLazySingleton<AccountMapper>(() => AccountMapperImpl())
+      ..registerLazySingleton<GoogleAccountMapper>(() => GoogleAccountMapperImpl())
+      ..registerLazySingleton<AccountMapper>(() => AccountMapperImpl(i.get<GoogleAccountMapper>()))
 
       // Register Data
-      ..registerSingleton<CacheService>(CacheServiceImpl())
+      ..registerLazySingleton<ENotesDatabase>(() => ENotesDatabase())
+      ..registerLazySingleton<TagsRepository>(() => TagsRepository(i.get<ENotesDatabase>()))
+      ..registerLazySingleton<AccountRepository>(() => AccountRepository(i.get<ENotesDatabase>()))
+      ..registerLazySingleton<CacheService>(() => CacheServiceImpl())
+      ..registerLazySingleton<KeyStoreService>(() => KeyStoreServiceImpl())
 
       // Register Web
       ..registerLazySingleton<AuthService>(() => AuthServiceImpl())
 
       // Register Utilities
-      ..registerSingleton<AnalyticsService>(AnalyticsServiceImpl());
+      ..registerLazySingleton<AnalyticsService>(() => AnalyticsServiceImpl());
+
+    configured = true;
   }
 
-  static T resolve<T>() => _i.get<T>();
+  static T resolve<T>() => i.get<T>();
 
-  static T resolveNamed<T>(String name) => _i.get(name) as T;
+  static T resolveNamed<T>(String name) => i.get(name) as T;
 }

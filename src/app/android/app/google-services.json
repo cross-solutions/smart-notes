@@ -50,6 +50,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234454236520:android:0fe5aa47ffb099cc3b2add",
+        "android_client_info": {
+          "package_name": "com.crosssolutions.enotes.hackathon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234454236520-gka82h357i3m2lrq7m9dm7tqu07pjico.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.crosssolutions.enotes.hackathon",
+            "certificate_hash": "ae606713868298be6e7a6173642900471c9dab7d"
+          }
+        },
+        {
+          "client_id": "234454236520-3lmb0u9aasfdmntb6dkglqqb7m8817um.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdTbuuD-Yw_OgXe8RoirwMz55nL27MyeE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "234454236520-3lmb0u9aasfdmntb6dkglqqb7m8817um.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
