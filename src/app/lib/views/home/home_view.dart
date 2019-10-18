@@ -94,11 +94,7 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                               child: Icon(MdiIcons.plus),
                               tooltip: 'Add Note',
                             ),
-                            TagSelectorWidget(
-                              items: viewModel.tags,
-                              selectedItems: viewModel.selectedTags,
-                              onSelectedItemsChanged: viewModel.onSelectedTagsChanged,
-                            ),
+                            TagSelectorWidget(items: viewModel.tags),
                           ],
                         ),
                       ),
