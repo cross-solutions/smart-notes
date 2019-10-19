@@ -3,6 +3,8 @@ import 'package:app_business/src/mappers/tags/tag_mapper.dart';
 import 'package:app_data/database.dart';
 
 abstract class TagsManager {
+  Future<List<TagEntity>> get tags;
+
   Stream<List<TagEntity>> get tagsStream;
 
   Future<TagEntity> getTag(String id);
@@ -46,5 +48,11 @@ class TagsManagerImpl implements TagsManager {
       return _tagMapper.toEntity(match);
     else
       return null;
+  }
+
+  @override
+  Future<List<TagEntity>> get tags async{
+    final results = await _tagsRepository.selectAll();
+    return results.map((t) => _tagMapper.toEntity(t)).toList();
   }
 }

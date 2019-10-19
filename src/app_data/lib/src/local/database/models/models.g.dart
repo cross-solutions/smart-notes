@@ -424,7 +424,7 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
       {@required this.id,
       @required this.title,
       @required this.content,
-      @required this.categoryId});
+      this.categoryId});
   factory NoteDataObject.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -522,11 +522,10 @@ class NotesCompanion extends UpdateCompanion<NoteDataObject> {
     @required String id,
     @required String title,
     @required String content,
-    @required String categoryId,
+    this.categoryId = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
-        content = Value(content),
-        categoryId = Value(categoryId);
+        content = Value(content);
   NotesCompanion copyWith(
       {Value<String> id,
       Value<String> title,
@@ -589,7 +588,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
     return GeneratedTextColumn(
       'category_id',
       $tableName,
-      false,
+      true,
     );
   }
 

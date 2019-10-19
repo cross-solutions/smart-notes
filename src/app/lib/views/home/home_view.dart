@@ -1,3 +1,5 @@
+import 'package:app/models/list_editing_mode.dart';
+import 'package:app/resources/resources.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app/views/home/notes_list_view.dart';
 import 'package:app/views/home/tag_selector_widget.dart';
@@ -22,9 +24,9 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
       child: ScopedModelDescendant<HomeViewModel>(
         builder: (context, child, viewModel) {
           return Scaffold(
-            floatingActionButton: _buildFloatingActionButton(),
             appBar: _buildAppBar(),
             body: _buildBody(),
+            floatingActionButton: _buildFloatingActionButton(),
           );
         },
       ),
@@ -35,46 +37,109 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
     return PreferredSize(
       child: SafeArea(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              ExtendedRow(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 12.0,
-                children: <Widget>[
-                  CachedNetworkImage(
-                    imageUrl: viewModel.currentAccount.imageUrl,
-                    imageBuilder: (context, imageProvider) => CircleAvatar(
-                      backgroundImage: imageProvider,
-                      radius: 28.0,
-                      backgroundColor: Theme.of(context).primaryColor,
+          padding: const EdgeInsets.all(16.0),
+          child: AnimatedCrossFade(
+            duration: Duration(milliseconds: 200),
+            firstCurve: Curves.easeOutSine,
+            secondCurve: Curves.easeOutSine,
+            crossFadeState:
+                viewModel.editingMode == ListEditingMode.none ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            firstChild: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                ExtendedRow(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 12.0,
+                  children: <Widget>[
+                    CachedNetworkImage(
+                      imageUrl: viewModel.currentAccount.imageUrl,
+                      imageBuilder: (context, imageProvider) => SizedBox(
+                        width: 56.0,
+                        height: 56.0,
+                        child: CircleAvatar(
+                          backgroundImage: imageProvider,
+                          radius: 28.0,
+                          backgroundColor: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
-                  ExtendedColumn(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        viewModel.currentAccount.name,
-                        style: Theme.of(context).textTheme.body2,
+                    ExtendedColumn(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          viewModel.currentAccount.name,
+                          style: Theme.of(context).textTheme.body2,
+                        ),
+                        Text(
+                          viewModel.currentAccount.email,
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                IconButton(
+                  icon: Icon(MdiIcons.logout),
+                  onPressed: viewModel.signOut,
+                  tooltip: 'Logout',
+                ),
+              ],
+            ),
+            secondChild: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                ExtendedRow(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 12.0,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 56.0,
+                      height: 56.0,
+                      child: IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () => viewModel.editingMode = ListEditingMode.none,
                       ),
-                      Text(
-                        viewModel.currentAccount.email,
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              IconButton(
-                icon: Icon(MdiIcons.logout),
-                onPressed: viewModel.signOut,
-                tooltip: 'Logout',
-              ),
-            ],
+                    ),
+                    ExtendedColumn(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ScopedModel<NotesListViewModel>(
+                          model: viewModel.notesListViewModel,
+                          child: ScopedModelDescendant<NotesListViewModel>(
+                            builder: (context, _, viewModel) {
+                              return Text(
+                                'Selected ${viewModel.selectedNotesCount} note/s',
+                                style: Theme.of(context).textTheme.body2,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                ExtendedRow(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 4.0,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.select_all),
+                      onPressed: viewModel.notesListViewModel.selectAllNotes,
+                      tooltip: 'Select All',
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete_forever),
+                      onPressed: viewModel.notesListViewModel.deleteNotes,
+                      tooltip: 'Delete',
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -83,33 +148,41 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
   }
 
   Widget _buildFloatingActionButton() {
-    return FloatingActionButton(
-      elevation: 1.0,
-      backgroundColor: Colors.grey[200],
-      onPressed: viewModel.addTag,
-      child: Icon(MdiIcons.plus),
-      tooltip: 'Add Note',
-    );
+    if (viewModel.editingMode == ListEditingMode.delete)
+      return null;
+    else
+      return FloatingActionButton(
+        onPressed: viewModel.onAddNote,
+        child: Container(
+          width: 56.0,
+          height: 56.0,
+          decoration: const BoxDecoration(
+            gradient: AppGradients.orangeAccent,
+            borderRadius: BorderRadius.all(
+              Radius.circular(28.0),
+            ),
+          ),
+          child: Icon(MdiIcons.plus),
+        ),
+        tooltip: 'Add Note',
+      );
   }
 
   Widget _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: ExtendedColumn(
-        spacing: 16.0,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _buildNotesTitle(),
-          _buildTagsSelectionWidget(),
-          _buildNotesListView(),
-        ],
-      ),
+    return ExtendedColumn(
+      spacing: 16.0,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _buildNotesTitle(),
+        _buildTagsSelectionWidget(),
+        _buildNotesListView(),
+      ],
     );
   }
 
   Widget _buildNotesTitle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -118,12 +191,12 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
             style: Theme.of(context).textTheme.headline,
           ),
           FlatButton(
+            colorBrightness: Theme.of(context).brightness,
             child: ExtendedRow(
               spacing: 8.0,
               children: <Widget>[
                 Icon(
                   Icons.mode_edit,
-                  color: Colors.black38,
                   size: 16.0,
                 ),
                 Text(
@@ -140,11 +213,12 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
   }
 
   Widget _buildTagsSelectionWidget() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: BouncingScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20.0, 8.0, 8.0, 8.0),
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 250),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 0.0),
+        scrollDirection: Axis.horizontal,
+        physics: BouncingScrollPhysics(),
         child: ExtendedRow(
           spacing: 12.0,
           mainAxisSize: MainAxisSize.min,
@@ -162,7 +236,10 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
   Widget _buildNotesListView() {
     return Expanded(
       child: NotesListView(
-        viewModel: viewModel.notesListViewModel,
+        editingMode: viewModel.editingMode,
+        onItemLongPress: () {
+          viewModel.editingMode = ListEditingMode.delete;
+        },
       ),
     );
   }

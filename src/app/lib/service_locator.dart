@@ -24,6 +24,7 @@ class ServiceLocator {
       ..registerLazySingleton<AppView>(() => AppView(i.get<AppViewModel>()))
       ..registerFactory<Widget>(() => LoginView(i.get<LoginViewModel>()), instanceName: ViewNames.loginView)
       ..registerFactory<Widget>(() => HomeView(i.get<HomeViewModel>()), instanceName: ViewNames.homeView)
+      ..registerFactory<Widget>(() => AddNoteView(i.get<AddNoteViewModel>()), instanceName: ViewNames.addNoteView)
 
       // Register View Models
       ..registerLazySingleton<AppViewModel>(
@@ -42,6 +43,12 @@ class ServiceLocator {
             i.get<DialogService>(),
           ))
       ..registerFactory<NotesListViewModel>(() => NotesListViewModel(i.get<NotesManager>(), i.get<TagsManager>()))
+      ..registerFactory<AddNoteViewModel>(() => AddNoteViewModel(
+            i.get<NotesManager>(),
+            i.get<TagsManager>(),
+            i.get<NavigationService>(),
+            i.get<DialogService>(),
+          ))
 
       // Register Services
       ..registerSingleton<NavigationService>(NavigationServiceImpl())

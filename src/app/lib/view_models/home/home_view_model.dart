@@ -7,7 +7,6 @@ import 'package:app/view_models/view_models.dart';
 import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
 import 'package:app_common/constants.dart';
-import 'package:uuid/uuid.dart';
 
 class HomeViewModel extends BaseViewModel {
   HomeViewModel(
@@ -19,6 +18,7 @@ class HomeViewModel extends BaseViewModel {
     this._dialogService,
   ) {
     currentAccount = accountManager.currentAccount;
+    editingMode = ListEditingMode.none;
     tags = [];
 
     _tagsStreamSubscription = _tagsManager.tagsStream.listen(_onTagsAdded);
@@ -44,6 +44,19 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners('tags');
   }
 
+  ListEditingMode _editingMode;
+  ListEditingMode get editingMode => _editingMode;
+  set editingMode(ListEditingMode value) {
+    if (_editingMode == value) {
+      _editingMode = value;
+      return;
+    }
+    _editingMode = value;
+    notifyListeners('editingMode');
+
+    if (_editingMode == ListEditingMode.none) notesListViewModel.notes.forEach((n) => n.isSelected = false);
+  }
+
   @override
   void dispose() {
     _tagsStreamSubscription.cancel();
@@ -63,15 +76,7 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> addTag() async {
-    _tagsManager.addTag(TagEntity(id: Uuid().v1(), name: 'Tag ${tags.length + 1}'));
-  }
-
-  Future<void> deleteTag() async {
-    for (final tag in tags) {
-      await _tagsManager.deleteTag(TagEntity(id: tag.id, name: tag.name));
-    }
-  }
+  Future<void> onAddNote() => _navigationService.pushModal(ViewNames.addNoteView);
 
   void _onTagsAdded(List<TagEntity> newTags) {
     final selectedTagModels = tags.where((t) => t.isSelected).toList();

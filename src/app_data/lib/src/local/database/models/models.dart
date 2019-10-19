@@ -45,5 +45,5 @@ class Notes extends Table {
 
   TextColumn get content => text()();
 
-  TextColumn get categoryId => text()();
+  TextColumn get categoryId => text().nullable()();
 }
