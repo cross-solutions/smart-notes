@@ -3,7 +3,7 @@ import 'package:app_business/src/mappers/tags/tag_mapper.dart';
 import 'package:app_data/database.dart';
 
 abstract class TagsManager {
-  Stream<List<TagEntity>> watchTags();
+  Stream<List<TagEntity>> get tagsStream;
 
   Future<TagEntity> getTag(String id);
 
@@ -19,7 +19,7 @@ class TagsManagerImpl implements TagsManager {
   final TagMapper _tagMapper;
 
   @override
-  Stream<List<TagEntity>> watchTags() async* {
+  Stream<List<TagEntity>> get tagsStream async* {
     await for (final tagDOs in _tagsRepository.watchItems()) {
       yield tagDOs.map((t) => _tagMapper.toEntity(t)).toList();
     }

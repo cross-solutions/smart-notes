@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app/models/models.dart';
 import 'package:app/view_models/base/base_view_model.dart';
 import 'package:app_business/managers.dart';
@@ -6,11 +8,12 @@ import 'package:app_business/entities.dart';
 class NotesListViewModel extends BaseViewModel {
   NotesListViewModel(this._notesManager, this._tagManager) {
     notes = [];
-    _notesManager.notesStream.listen(_onNotesAdded);
+    _notesStreamSubscription = _notesManager.notesStream.listen(_onNotesAdded);
   }
 
   final NotesManager _notesManager;
   final TagsManager _tagManager;
+  StreamSubscription _notesStreamSubscription;
 
   List<TagItemModel> tags;
 
@@ -23,6 +26,12 @@ class NotesListViewModel extends BaseViewModel {
     }
     _notes = value;
     notifyListeners('notes');
+  }
+
+  @override
+  void dispose() {
+    _notesStreamSubscription.cancel();
+    super.dispose();
   }
 
   void _onNotesAdded(List<NoteEntity> newNotes) async {

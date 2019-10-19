@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app/models/models.dart';
 import 'package:app/services/services.dart';
 import 'package:app/view_models/home/notes_list_view_model.dart';
@@ -19,7 +21,7 @@ class HomeViewModel extends BaseViewModel {
     currentAccount = accountManager.currentAccount;
     tags = [];
 
-    _tagsManager.watchTags().listen(_onTagsAdded);
+    _tagsStreamSubscription = _tagsManager.tagsStream.listen(_onTagsAdded);
   }
 
   final NotesListViewModel notesListViewModel;
@@ -29,6 +31,7 @@ class HomeViewModel extends BaseViewModel {
   final TagsManager _tagsManager;
   final NavigationService _navigationService;
   final DialogService _dialogService;
+  StreamSubscription _tagsStreamSubscription;
 
   List<TagItemModel> _tags;
   List<TagItemModel> get tags => _tags;
@@ -39,6 +42,12 @@ class HomeViewModel extends BaseViewModel {
     }
     _tags = value;
     notifyListeners('tags');
+  }
+
+  @override
+  void dispose() {
+    _tagsStreamSubscription.cancel();
+    super.dispose();
   }
 
   Future<void> signOut() async {

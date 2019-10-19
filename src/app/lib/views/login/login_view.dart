@@ -1,3 +1,4 @@
+import 'package:app/resources/app_images.dart';
 import 'package:app/view_models/login/login_view_model.dart';
 import 'package:app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,7 @@ class _LoginViewState extends ModelBoundState<LoginView, LoginViewModel> {
                             spacing: 8.0,
                             children: <Widget>[
                               Image.asset(
-                                'assets/graphics/ic_google.png',
+                                AppImages.ic_google,
                                 color: Colors.black,
                               ),
                               Text('GOOGLE SIGN IN'),

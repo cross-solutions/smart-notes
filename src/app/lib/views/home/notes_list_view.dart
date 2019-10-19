@@ -1,3 +1,4 @@
+import 'package:app/resources/app_images.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,14 @@ class NotesListView extends StatelessWidget {
       );
     } else {
       return Center(
-        child: Text('You have ${viewModel.notes.length}'),
+        child: ExtendedColumn(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 24.0,
+          children: <Widget>[
+            Image.asset(AppImages.im_empty_note),
+            Text('You have ${viewModel.notes.length}'),
+          ],
+        ),
       );
     }
   }

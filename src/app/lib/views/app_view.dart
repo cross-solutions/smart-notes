@@ -1,5 +1,5 @@
 import 'package:app/keys/widget_keys.dart';
-import 'package:app/localization/i18n.dart';
+import 'package:app/resources/localization/i18n.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -48,12 +48,9 @@ class _AppViewState extends ModelBoundState<AppView, AppViewModel> {
             900: Color(0xff331c00)
           },
         ),
-        
         buttonTheme: ButtonThemeData(
           shape: StadiumBorder(),
-          
         ),
-        
         colorScheme: ColorScheme(
           primary: Color(0xfffe8c00),
           primaryVariant: Color(0xff995400),
