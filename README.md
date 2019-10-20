@@ -1,16 +1,11 @@
-# app
+# Smart Notes
 
-A new Flutter project.
+A note-taking app powered by Google services such as Google Sign In and Firebase ML Vision.
 
-## Getting Started
+This is an entry to FlutterPH's Online Hackathon.
 
-This project is a starting point for a Flutter application.
+## Running the Project
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Please send me an email at dustinboy619@gmail.com with your local Android debug certificate's SHA-1 fingerprint.
+We will then give you the `google-services.json` config file needed in order to run the project. Place this in
+`src/app/android/app` directory.
