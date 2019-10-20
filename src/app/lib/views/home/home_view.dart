@@ -34,6 +34,8 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
   }
 
   Widget _buildAppBar() {
+    final isDeleting = viewModel.editingMode == ListEditingMode.delete;
+
     return PreferredSize(
       child: SafeArea(
         child: Container(
@@ -42,8 +44,7 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
             duration: Duration(milliseconds: 200),
             firstCurve: Curves.easeOutSine,
             secondCurve: Curves.easeOutSine,
-            crossFadeState:
-                viewModel.editingMode == ListEditingMode.none ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            crossFadeState: isDeleting ? CrossFadeState.showFirst : CrossFadeState.showSecond,
             firstChild: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -100,26 +101,13 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                       height: 56.0,
                       child: IconButton(
                         icon: Icon(Icons.close),
-                        onPressed: () => viewModel.editingMode = ListEditingMode.none,
+                        onPressed: viewModel.onToggleEditingMode,
                       ),
                     ),
-                    ExtendedColumn(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ScopedModel<NotesListViewModel>(
-                          model: viewModel.notesListViewModel,
-                          child: ScopedModelDescendant<NotesListViewModel>(
-                            builder: (context, _, viewModel) {
-                              return Text(
-                                'Selected ${viewModel.selectedNotesCount} note/s',
-                                style: Theme.of(context).textTheme.body2,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    )
+                    Text(
+                      'Selected ${viewModel.selectedNotesCount} note/s',
+                      style: Theme.of(context).textTheme.body2,
+                    ),
                   ],
                 ),
                 ExtendedRow(
@@ -128,12 +116,12 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                   children: <Widget>[
                     IconButton(
                       icon: Icon(Icons.select_all),
-                      onPressed: viewModel.notesListViewModel.selectAllNotes,
+                      onPressed: viewModel.selectAllNotes,
                       tooltip: 'Select All',
                     ),
                     IconButton(
                       icon: Icon(Icons.delete_forever),
-                      onPressed: viewModel.notesListViewModel.deleteNotes,
+                      onPressed: viewModel.deleteNotes,
                       tooltip: 'Delete',
                     ),
                   ],
@@ -175,7 +163,7 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
       children: <Widget>[
         _buildNotesTitle(),
         _buildTagsSelectionWidget(),
-        _buildNotesListView(),
+        Expanded(child: NotesListView()),
       ],
     );
   }
@@ -224,22 +212,9 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            TagSelectorWidget(
-              items: viewModel.tags,
-            ),
+            TagSelectorWidget(items: viewModel.tags),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildNotesListView() {
-    return Expanded(
-      child: NotesListView(
-        editingMode: viewModel.editingMode,
-        onItemLongPress: () {
-          viewModel.editingMode = ListEditingMode.delete;
-        },
       ),
     );
   }

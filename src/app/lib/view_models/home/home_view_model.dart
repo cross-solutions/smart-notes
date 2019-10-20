@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:app/models/models.dart';
 import 'package:app/services/services.dart';
-import 'package:app/view_models/home/notes_list_view_model.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
@@ -10,28 +9,31 @@ import 'package:app_common/constants.dart';
 
 class HomeViewModel extends BaseViewModel {
   HomeViewModel(
-    this.notesListViewModel,
     AccountManager accountManager,
     this._authManager,
     this._tagsManager,
+    this._notesManager,
     this._navigationService,
     this._dialogService,
   ) {
     currentAccount = accountManager.currentAccount;
     editingMode = ListEditingMode.none;
     tags = [];
+    selectedNotesCount = 0;
 
     _tagsStreamSubscription = _tagsManager.tagsStream.listen(_onTagsAdded);
+    _notesStreamSubscription = _notesManager.notesStream.listen(_onNotesAdded);
   }
 
-  final NotesListViewModel notesListViewModel;
   AccountEntity currentAccount;
 
   final AuthManager _authManager;
   final TagsManager _tagsManager;
+  final NotesManager _notesManager;
   final NavigationService _navigationService;
   final DialogService _dialogService;
   StreamSubscription _tagsStreamSubscription;
+  StreamSubscription _notesStreamSubscription;
 
   List<TagItemModel> _tags;
   List<TagItemModel> get tags => _tags;
@@ -54,12 +56,35 @@ class HomeViewModel extends BaseViewModel {
     _editingMode = value;
     notifyListeners('editingMode');
 
-    if (_editingMode == ListEditingMode.none) notesListViewModel.notes.forEach((n) => n.isSelected = false);
+    if (_editingMode == ListEditingMode.none) notes.forEach((n) => n.isSelected = false);
+  }
+
+  int _selectedNotesCount;
+  int get selectedNotesCount => _selectedNotesCount;
+  set selectedNotesCount(int value) {
+    if (_selectedNotesCount == value) {
+      _selectedNotesCount = value;
+      return;
+    }
+    _selectedNotesCount = value;
+    notifyListeners('selectedNotesCount');
+  }
+
+  List<NoteItemModel> _notes;
+  List<NoteItemModel> get notes => _notes;
+  set notes(List<NoteItemModel> value) {
+    if (_notes == value) {
+      _notes = value;
+      return;
+    }
+    _notes = value;
+    notifyListeners('notes');
   }
 
   @override
   void dispose() {
     _tagsStreamSubscription.cancel();
+    _notesStreamSubscription.cancel();
     super.dispose();
   }
 
@@ -77,6 +102,49 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> onAddNote() => _navigationService.pushModal(ViewNames.addNoteView);
+
+  void onToggleEditingMode() {
+    switch (editingMode) {
+      case ListEditingMode.none:
+        editingMode = ListEditingMode.delete;
+        break;
+      case ListEditingMode.delete:
+        editingMode = ListEditingMode.none;
+        break;
+    }
+  }
+
+  void selectAllNotes() {
+    notes.forEach((n) => n.isSelected = true);
+    selectedNotesCount = notes.where((n) => n.isSelected).length;
+  }
+
+  void onToggleNoteSelection(NoteItemModel note) {
+    note.isSelected = !note.isSelected;
+    selectedNotesCount = notes.where((n) => n.isSelected).length;
+  }
+
+  Future<void> deleteNotes() async {
+    final notesToBeDeleted = notes.where((n) => n.isSelected);
+    if (notesToBeDeleted.isNotEmpty) {
+      for (final note in notesToBeDeleted) {
+        await _notesManager.deleteNote(NoteEntity(id: note.id));
+      }
+    }
+  }
+
+  void _onNotesAdded(List<NoteEntity> newNotes) {
+    notes = newNotes.map((n) {
+      return NoteItemModel(
+        id: n.id,
+        tagId: n.tagId,
+        title: n.title,
+        content: n.content,
+      );
+    }).toList();
+
+    selectedNotesCount = notes.where((n) => n.isSelected).length;
+  }
 
   void _onTagsAdded(List<TagEntity> newTags) {
     final selectedTagModels = tags.where((t) => t.isSelected).toList();

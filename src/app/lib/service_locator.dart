@@ -35,14 +35,13 @@ class ServiceLocator {
             i.get<DialogService>(),
           ))
       ..registerFactory<HomeViewModel>(() => HomeViewModel(
-            i.get<NotesListViewModel>(),
             i.get<AccountManager>(),
             i.get<AuthManager>(),
             i.get<TagsManager>(),
+            i.get<NotesManager>(),
             i.get<NavigationService>(),
             i.get<DialogService>(),
           ))
-      ..registerFactory<NotesListViewModel>(() => NotesListViewModel(i.get<NotesManager>(), i.get<TagsManager>()))
       ..registerFactory<AddNoteViewModel>(() => AddNoteViewModel(
             i.get<NotesManager>(),
             i.get<TagsManager>(),
