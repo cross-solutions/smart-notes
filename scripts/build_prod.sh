@@ -6,7 +6,6 @@
 # defined in the CI pipeline in Azure DevOps.
 
 # Change current working directory to `src/app`
-cd ..
 cd "src/app"
 
 echo "Building app version $APP_VERSIONNAME ($APP_VERSIONCODE)"
@@ -17,6 +16,6 @@ echo "Building Android..."
 flutter build apk --build-name=$APP_VERSIONNAME --build-number=$APP_VERSIONCODE --target="lib/main_prod.dart"
 
 # Build iOS APP
-echo "Building iOS..."
+# echo "Building iOS..."
 
-flutter build ios --build-name=$APP_VERSIONNAME --build-number=$APP_VERSIONCODE --target="lib/main_prod.dart" --codesign
+# flutter build ios --build-name=$APP_VERSIONNAME --build-number=$APP_VERSIONCODE --target="lib/main_prod.dart" --codesign

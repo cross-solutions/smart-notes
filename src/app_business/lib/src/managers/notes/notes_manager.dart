@@ -8,6 +8,8 @@ abstract class NotesManager {
   Future<void> addNote(NoteEntity note);
 
   Future<void> deleteNote(NoteEntity note);
+
+  Future<void> updateNote(NoteEntity note);
 }
 
 class NotesManagerImpl implements NotesManager {
@@ -33,5 +35,11 @@ class NotesManagerImpl implements NotesManager {
     await for (final noteDOs in _notesRepository.watchItems()) {
       yield noteDOs.map((n) => _notesMapper.toEntity(n)).toList();
     }
+  }
+
+  @override
+  Future<void> updateNote(NoteEntity note) async {
+    final noteDO = _notesMapper.toDataObject(note);
+    await _notesRepository.updateItem(noteDO);
   }
 }

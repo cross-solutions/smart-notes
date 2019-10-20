@@ -22,7 +22,6 @@
 #        -pubspec.yaml
 
 # Change current working directory to `src`
-cd ..
 cd "src"
 
 # Install lcov using Homebrew. Works only in Linux and MacOS.

@@ -3,7 +3,6 @@
 # Run this script in the `src/app` directory
 #
 # Change current working directory to `src/app`
-cd ..
 cd "src/app"
 
 # Install AVD files

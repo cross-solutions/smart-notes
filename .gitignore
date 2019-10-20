@@ -9,6 +9,8 @@
 .history
 .svn/
 screenshots
+google-services.json
+pubspec.lock
 
 # IntelliJ related
 *.iml
@@ -28,7 +30,6 @@ screenshots
 .packages
 .pub-cache/
 .pub/
-pubspec.lock
 build
 
 # Android related

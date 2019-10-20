@@ -19,16 +19,20 @@ class ServiceLocator {
 
   static void configure() {
     assert(!configured);
+
     i
       // Register Views
       ..registerLazySingleton<AppView>(() => AppView(i.get<AppViewModel>()))
       ..registerFactory<Widget>(() => LoginView(i.get<LoginViewModel>()), instanceName: ViewNames.loginView)
       ..registerFactory<Widget>(() => HomeView(i.get<HomeViewModel>()), instanceName: ViewNames.homeView)
-      ..registerFactory<Widget>(() => AddNoteView(i.get<AddNoteViewModel>()), instanceName: ViewNames.addNoteView)
+      ..registerFactory<Widget>(() => AddOrEditNoteView(i.get<AddOrEditNoteViewModel>()), instanceName: ViewNames.addNoteView)
 
       // Register View Models
-      ..registerLazySingleton<AppViewModel>(
-          () => AppViewModel(i.get<AuthManager>(), i.get<AnalyticsService>(), i.get<NavigationService>()))
+      ..registerLazySingleton<AppViewModel>(() => AppViewModel(
+            i.get<AuthManager>(),
+            i.get<AnalyticsService>(),
+            i.get<NavigationService>(),
+          ))
       ..registerFactory<LoginViewModel>(() => LoginViewModel(
             i.get<AuthManager>(),
             i.get<NavigationService>(),
@@ -42,16 +46,20 @@ class ServiceLocator {
             i.get<NavigationService>(),
             i.get<DialogService>(),
           ))
-      ..registerFactory<AddNoteViewModel>(() => AddNoteViewModel(
+      ..registerFactory<AddOrEditNoteViewModel>(() => AddOrEditNoteViewModel(
             i.get<NotesManager>(),
             i.get<TagsManager>(),
+            i.get<CameraService>(),
+            i.get<MLVisionService>(),
             i.get<NavigationService>(),
             i.get<DialogService>(),
           ))
 
       // Register Services
-      ..registerSingleton<NavigationService>(NavigationServiceImpl())
-      ..registerSingleton<DialogService>(DialogServiceImpl())
+      ..registerLazySingleton<NavigationService>(() => NavigationServiceImpl())
+      ..registerLazySingleton<DialogService>(() => DialogServiceImpl())
+      ..registerLazySingleton<CameraService>(() => CameraServiceImpl())
+      ..registerLazySingleton<MLVisionService>(() => MLVisionServiceImpl())
 
       // Register Managers
       ..registerLazySingleton<AuthManager>(() => AuthManagerImpl(
