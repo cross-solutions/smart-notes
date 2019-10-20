@@ -1,7 +1,7 @@
-import 'package:app/resources/resources.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class AddNoteView extends ModelBoundWidget<AddNoteViewModel> {
@@ -17,6 +17,7 @@ class _AddNoteViewState extends ModelBoundState<AddNoteView, AddNoteViewModel> {
 
   @override
   void initState() {
+    viewModel.onTextRecognized((text) => _noteController.text = text);
     super.initState();
   }
 
@@ -42,7 +43,7 @@ class _AddNoteViewState extends ModelBoundState<AddNoteView, AddNoteViewModel> {
               bottom: PreferredSize(
                 child: Expanded(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Take a note',
@@ -56,7 +57,7 @@ class _AddNoteViewState extends ModelBoundState<AddNoteView, AddNoteViewModel> {
             body: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                 child: ExtendedColumn(
                   spacing: 24.0,
                   children: <Widget>[
@@ -76,6 +77,14 @@ class _AddNoteViewState extends ModelBoundState<AddNoteView, AddNoteViewModel> {
                         labelText: 'Note',
                       ),
                     ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: Icon(MdiIcons.textRecognition),
+                        onPressed: viewModel.onStartTextRecognitionFromCamera,
+                        tooltip: 'Recognize text',
+                      ),
+                    )
                   ],
                 ),
               ),

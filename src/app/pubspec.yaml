@@ -30,8 +30,8 @@ dependencies:
   cached_network_image: ^1.1.2+1
   flutter_staggered_grid_view: 0.3.0
   firebase_ml_vision: ^0.9.2+2
-  camera: ^0.5.6+1
   share: ^0.6.2+4
+  image_picker: ^0.6.1+8
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

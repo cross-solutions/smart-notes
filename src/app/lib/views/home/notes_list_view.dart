@@ -1,4 +1,3 @@
-import 'package:app/models/models.dart';
 import 'package:app/resources/resources.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app/views/home/note_list_item.dart';

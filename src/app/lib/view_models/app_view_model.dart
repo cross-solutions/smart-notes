@@ -19,10 +19,13 @@ class AppViewModel extends BaseViewModel {
   final NavigationService _navigationService;
 
   Future<void> _onInitialize() async {
-    await _analyticsService.start();
-
     try {
-      await _authManager.ensureUserSignedIn();
+      await Future.wait([
+        _analyticsService.start(),
+        _authManager.ensureUserSignedIn(),
+        Future.delayed(Duration(seconds: 1)),
+      ]);
+
       await _navigationService.pushReplacement(ViewNames.homeView);
     } on AuthException catch (aex) {
       debugError(aex.message);

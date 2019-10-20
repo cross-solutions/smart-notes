@@ -17,12 +17,13 @@ class HomeViewModel extends BaseViewModel {
     this._dialogService,
   ) {
     currentAccount = accountManager.currentAccount;
-    editingMode = ListEditingMode.none;
     tags = [];
+    notes = [];
+    editingMode = ListEditingMode.none;
     selectedNotesCount = 0;
 
-    _tagsStreamSubscription = _tagsManager.tagsStream.listen(_onTagsAdded);
-    _notesStreamSubscription = _notesManager.notesStream.listen(_onNotesAdded);
+    _tagsStreamSubscription = _tagsManager.tagsStream.listen(_onTagsChanged);
+    _notesStreamSubscription = _notesManager.notesStream.listen(_onNotesChanged);
   }
 
   AccountEntity currentAccount;
@@ -55,8 +56,6 @@ class HomeViewModel extends BaseViewModel {
     }
     _editingMode = value;
     notifyListeners('editingMode');
-
-    if (_editingMode == ListEditingMode.none) notes.forEach((n) => n.isSelected = false);
   }
 
   int _selectedNotesCount;
@@ -108,14 +107,22 @@ class HomeViewModel extends BaseViewModel {
       case ListEditingMode.none:
         editingMode = ListEditingMode.delete;
         break;
+
       case ListEditingMode.delete:
         editingMode = ListEditingMode.none;
+        notes.forEach((n) => n.isSelected = false);
         break;
     }
   }
 
-  void selectAllNotes() {
-    notes.forEach((n) => n.isSelected = true);
+  void onToggleSelectAllNotes() {
+    final allNotesSelected = notes.every((n) => n.isSelected);
+
+    if (allNotesSelected)
+      notes.forEach((n) => n.isSelected = false);
+    else
+      notes.forEach((n) => n.isSelected = true);
+
     selectedNotesCount = notes.where((n) => n.isSelected).length;
   }
 
@@ -124,16 +131,22 @@ class HomeViewModel extends BaseViewModel {
     selectedNotesCount = notes.where((n) => n.isSelected).length;
   }
 
-  Future<void> deleteNotes() async {
-    final notesToBeDeleted = notes.where((n) => n.isSelected);
-    if (notesToBeDeleted.isNotEmpty) {
-      for (final note in notesToBeDeleted) {
-        await _notesManager.deleteNote(NoteEntity(id: note.id));
-      }
+  void Function() get onDeleteSelectedNotes {
+    if (selectedNotesCount == 0)
+      return null;
+    else {
+      return () async {
+        final notesToBeDeleted = notes.where((n) => n.isSelected);
+        for (final note in notesToBeDeleted) {
+          await _notesManager.deleteNote(NoteEntity(id: note.id));
+        }
+
+        onToggleEditingMode();
+      };
     }
   }
 
-  void _onNotesAdded(List<NoteEntity> newNotes) {
+  void _onNotesChanged(List<NoteEntity> newNotes) {
     notes = newNotes.map((n) {
       return NoteItemModel(
         id: n.id,
@@ -146,7 +159,7 @@ class HomeViewModel extends BaseViewModel {
     selectedNotesCount = notes.where((n) => n.isSelected).length;
   }
 
-  void _onTagsAdded(List<TagEntity> newTags) {
+  void _onTagsChanged(List<TagEntity> newTags) {
     final selectedTagModels = tags.where((t) => t.isSelected).toList();
     final newTagModels = newTags.map((t) => TagItemModel(t.id, t.name)).toList();
     selectedTagModels.forEach((t1) => newTagModels.firstWhere((t2) => t2.id == t1.id)..isSelected = true);

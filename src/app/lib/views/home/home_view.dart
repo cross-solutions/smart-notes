@@ -23,28 +23,27 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
       model: viewModel,
       child: ScopedModelDescendant<HomeViewModel>(
         builder: (context, child, viewModel) {
+          final isDeleting = viewModel.editingMode == ListEditingMode.delete;
           return Scaffold(
-            appBar: _buildAppBar(),
-            body: _buildBody(),
-            floatingActionButton: _buildFloatingActionButton(),
+            appBar: _buildAppBar(isDeleting),
+            body: _buildBody(isDeleting),
+            floatingActionButton: _buildFloatingActionButton(isDeleting),
           );
         },
       ),
     );
   }
 
-  Widget _buildAppBar() {
-    final isDeleting = viewModel.editingMode == ListEditingMode.delete;
-
+  Widget _buildAppBar(bool isDeleting) {
     return PreferredSize(
       child: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(16.0),
           child: AnimatedCrossFade(
-            duration: Duration(milliseconds: 200),
+            duration: Duration(milliseconds: 250),
             firstCurve: Curves.easeOutSine,
             secondCurve: Curves.easeOutSine,
-            crossFadeState: isDeleting ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            crossFadeState: isDeleting ? CrossFadeState.showSecond : CrossFadeState.showFirst,
             firstChild: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -52,19 +51,22 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: 12.0,
                   children: <Widget>[
-                    CachedNetworkImage(
-                      imageUrl: viewModel.currentAccount.imageUrl,
-                      imageBuilder: (context, imageProvider) => SizedBox(
-                        width: 56.0,
-                        height: 56.0,
-                        child: CircleAvatar(
+                    SizedBox(
+                      width: 56.0,
+                      height: 56.0,
+                      child: CachedNetworkImage(
+                        imageUrl: viewModel.currentAccount.imageUrl,
+                        imageBuilder: (context, imageProvider) => CircleAvatar(
                           backgroundImage: imageProvider,
                           radius: 28.0,
                           backgroundColor: Theme.of(context).primaryColor,
                         ),
+                        placeholder: (context, url) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
-                      placeholder: (context, url) => CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
                     ExtendedColumn(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,12 +118,12 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                   children: <Widget>[
                     IconButton(
                       icon: Icon(Icons.select_all),
-                      onPressed: viewModel.selectAllNotes,
+                      onPressed: viewModel.onToggleSelectAllNotes,
                       tooltip: 'Select All',
                     ),
                     IconButton(
                       icon: Icon(Icons.delete_forever),
-                      onPressed: viewModel.deleteNotes,
+                      onPressed: viewModel.onDeleteSelectedNotes,
                       tooltip: 'Delete',
                     ),
                   ],
@@ -135,8 +137,8 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
     );
   }
 
-  Widget _buildFloatingActionButton() {
-    if (viewModel.editingMode == ListEditingMode.delete)
+  Widget _buildFloatingActionButton(bool isDeleting) {
+    if (isDeleting)
       return null;
     else
       return FloatingActionButton(
@@ -156,13 +158,27 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
       );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(bool isDeleting) {
     return ExtendedColumn(
       spacing: 16.0,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        _buildNotesTitle(),
-        _buildTagsSelectionWidget(),
+        IgnorePointer(
+          ignoring: isDeleting,
+          child: AnimatedOpacity(
+            duration: Duration(milliseconds: 250),
+            curve: Curves.easeOutSine,
+            opacity: isDeleting ? 0.18 : 1.0,
+            child: ExtendedColumn(
+              spacing: 16.0,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _buildNotesTitle(),
+                _buildTagsSelectionWidget(),
+              ],
+            ),
+          ),
+        ),
         Expanded(child: NotesListView()),
       ],
     );
