@@ -1,5 +1,5 @@
 import 'package:app/keys/widget_keys.dart';
-import 'package:app/localization/i18n.dart';
+import 'package:app/resources/localization/i18n.dart';
 import 'package:app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

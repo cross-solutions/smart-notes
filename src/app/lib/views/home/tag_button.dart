@@ -1,3 +1,4 @@
+import 'package:app/resources/resources.dart';
 import 'package:flutter/material.dart';
 
 class TagButton extends StatelessWidget {
@@ -17,23 +18,16 @@ class TagButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => onSelectedChanged(!isSelected),
       child: AnimatedContainer(
-        constraints: BoxConstraints(minWidth: 72.0, maxHeight: 48.0),
+        constraints: BoxConstraints(minWidth: 72.0, maxHeight: 36.0),
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         duration: Duration(milliseconds: 150),
         curve: Curves.easeInOutQuad,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(24.0)),
+          border: Border(),
           gradient: isSelected
-              ? LinearGradient(colors: <Color>[
-                  Color(0xFFFE8c00),
-                  Color(0xFFF83600),
-                ])
-              : LinearGradient(
-                  colors: <Color>[
-                    Colors.grey[200],
-                    Colors.grey[100],
-                  ],
-                ),
+              ? AppGradients.orangeAccent
+              : AppGradients.lightGray,
         ),
         child: Center(child: child),
       ),

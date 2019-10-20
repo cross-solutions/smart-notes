@@ -3,7 +3,11 @@ import 'package:app_business/src/mappers/tags/tag_mapper.dart';
 import 'package:app_data/database.dart';
 
 abstract class TagsManager {
-  Stream<List<TagEntity>> watchTags();
+  Future<List<TagEntity>> get tags;
+
+  Stream<List<TagEntity>> get tagsStream;
+
+  Future<TagEntity> getTag(String id);
 
   Future<void> addTag(TagEntity tag);
 
@@ -17,7 +21,7 @@ class TagsManagerImpl implements TagsManager {
   final TagMapper _tagMapper;
 
   @override
-  Stream<List<TagEntity>> watchTags() async* {
+  Stream<List<TagEntity>> get tagsStream async* {
     await for (final tagDOs in _tagsRepository.watchItems()) {
       yield tagDOs.map((t) => _tagMapper.toEntity(t)).toList();
     }
@@ -33,5 +37,22 @@ class TagsManagerImpl implements TagsManager {
   Future<void> deleteTag(TagEntity tag) async {
     final tagDO = _tagMapper.toDataObject(tag);
     await _tagsRepository.deleteItem(tagDO);
+  }
+
+  @override
+  Future<TagEntity> getTag(String id) async {
+    final results = await _tagsRepository.selectAll();
+    final match = results.firstWhere((t) => t.id == id);
+
+    if (match != null)
+      return _tagMapper.toEntity(match);
+    else
+      return null;
+  }
+
+  @override
+  Future<List<TagEntity>> get tags async{
+    final results = await _tagsRepository.selectAll();
+    return results.map((t) => _tagMapper.toEntity(t)).toList();
   }
 }

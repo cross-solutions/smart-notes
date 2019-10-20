@@ -22,40 +22,60 @@ class ServiceLocator {
     i
       // Register Views
       ..registerLazySingleton<AppView>(() => AppView(i.get<AppViewModel>()))
-      ..registerFactory<Widget>(() => MainView(i.get<MainViewModel>()), instanceName: ViewNames.mainView)
-      ..registerFactory<Widget>(() => SecondView(i.get<SecondViewModel>()), instanceName: ViewNames.secondView)
       ..registerFactory<Widget>(() => LoginView(i.get<LoginViewModel>()), instanceName: ViewNames.loginView)
       ..registerFactory<Widget>(() => HomeView(i.get<HomeViewModel>()), instanceName: ViewNames.homeView)
+      ..registerFactory<Widget>(() => AddNoteView(i.get<AddNoteViewModel>()), instanceName: ViewNames.addNoteView)
 
       // Register View Models
       ..registerLazySingleton<AppViewModel>(
           () => AppViewModel(i.get<AuthManager>(), i.get<AnalyticsService>(), i.get<NavigationService>()))
-      ..registerFactory<MainViewModel>(() => MainViewModel(i.get<NavigationService>()))
-      ..registerFactory<SecondViewModel>(() => SecondViewModel(i.get<NavigationService>(), i.get<DialogService>()))
-      ..registerFactory<LoginViewModel>(
-          () => LoginViewModel(i.get<AuthManager>(), i.get<NavigationService>(), i.get<DialogService>()))
-      ..registerFactory<HomeViewModel>(() => HomeViewModel(i.get<AccountManager>(), i.get<AuthManager>(),
-          i.get<TagsManager>(), i.get<NavigationService>(), i.get<DialogService>()))
+      ..registerFactory<LoginViewModel>(() => LoginViewModel(
+            i.get<AuthManager>(),
+            i.get<NavigationService>(),
+            i.get<DialogService>(),
+          ))
+      ..registerFactory<HomeViewModel>(() => HomeViewModel(
+            i.get<AccountManager>(),
+            i.get<AuthManager>(),
+            i.get<TagsManager>(),
+            i.get<NotesManager>(),
+            i.get<NavigationService>(),
+            i.get<DialogService>(),
+          ))
+      ..registerFactory<AddNoteViewModel>(() => AddNoteViewModel(
+            i.get<NotesManager>(),
+            i.get<TagsManager>(),
+            i.get<NavigationService>(),
+            i.get<DialogService>(),
+          ))
 
       // Register Services
       ..registerSingleton<NavigationService>(NavigationServiceImpl())
       ..registerSingleton<DialogService>(DialogServiceImpl())
 
       // Register Managers
-      ..registerLazySingleton<AuthManager>(() => AuthManagerImpl(i.get<AccountManager>(), i.get<AuthService>(),
-          i.get<AccountMapper>(), i.get<KeyStoreService>(), i.get<AccountRepository>()))
+      ..registerLazySingleton<AuthManager>(() => AuthManagerImpl(
+            i.get<AccountManager>(),
+            i.get<AuthService>(),
+            i.get<AccountMapper>(),
+            i.get<KeyStoreService>(),
+            i.get<AccountRepository>(),
+          ))
       ..registerLazySingleton<AccountManager>(() => AccountManagerImpl())
       ..registerLazySingleton<TagsManager>(() => TagsManagerImpl(i.get<TagsRepository>(), i.get<TagMapper>()))
+      ..registerLazySingleton<NotesManager>(() => NotesManagerImpl(i.get<NotesRepository>(), i.get<NotesMapper>()))
 
       // Register Mappers
       ..registerLazySingleton<GoogleAccountMapper>(() => GoogleAccountMapperImpl())
       ..registerLazySingleton<AccountMapper>(() => AccountMapperImpl(i.get<GoogleAccountMapper>()))
+      ..registerLazySingleton<NotesMapper>(() => NotesMapperImpl())
       ..registerLazySingleton<TagMapper>(() => TagMapperImpl())
 
       // Register Data
       ..registerLazySingleton<ENotesDatabase>(() => ENotesDatabase())
       ..registerLazySingleton<TagsRepository>(() => TagsRepository(i.get<ENotesDatabase>()))
       ..registerLazySingleton<AccountRepository>(() => AccountRepository(i.get<ENotesDatabase>()))
+      ..registerLazySingleton<NotesRepository>(() => NotesRepository(i.get<ENotesDatabase>()))
       ..registerLazySingleton<CacheService>(() => CacheServiceImpl())
       ..registerLazySingleton<KeyStoreService>(() => KeyStoreServiceImpl())
 

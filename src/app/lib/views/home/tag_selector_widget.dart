@@ -21,7 +21,10 @@ class TagSelectorWidget extends StatelessWidget {
             child: ScopedModelDescendant<TagItemModel>(
               builder: (context, _, model) {
                 return TagButton(
-                  child: Text(t.name),
+                  child: Text(
+                    t.name,
+                    style: TextStyle().copyWith(color: Colors.black87, fontWeight: FontWeight.w600),
+                  ),
                   isSelected: model.isSelected,
                   onSelectedChanged: (isSelected) => model.isSelected = isSelected,
                 );

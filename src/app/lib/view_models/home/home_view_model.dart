@@ -1,31 +1,39 @@
+import 'dart:async';
+
 import 'package:app/models/models.dart';
 import 'package:app/services/services.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
 import 'package:app_common/constants.dart';
-import 'package:uuid/uuid.dart';
 
 class HomeViewModel extends BaseViewModel {
   HomeViewModel(
     AccountManager accountManager,
     this._authManager,
     this._tagsManager,
+    this._notesManager,
     this._navigationService,
     this._dialogService,
   ) {
     currentAccount = accountManager.currentAccount;
+    editingMode = ListEditingMode.none;
     tags = [];
+    selectedNotesCount = 0;
 
-    _tagsManager.watchTags().listen(_onTagsAdded);
+    _tagsStreamSubscription = _tagsManager.tagsStream.listen(_onTagsAdded);
+    _notesStreamSubscription = _notesManager.notesStream.listen(_onNotesAdded);
   }
+
+  AccountEntity currentAccount;
 
   final AuthManager _authManager;
   final TagsManager _tagsManager;
+  final NotesManager _notesManager;
   final NavigationService _navigationService;
   final DialogService _dialogService;
-
-  AccountEntity currentAccount;
+  StreamSubscription _tagsStreamSubscription;
+  StreamSubscription _notesStreamSubscription;
 
   List<TagItemModel> _tags;
   List<TagItemModel> get tags => _tags;
@@ -36,6 +44,48 @@ class HomeViewModel extends BaseViewModel {
     }
     _tags = value;
     notifyListeners('tags');
+  }
+
+  ListEditingMode _editingMode;
+  ListEditingMode get editingMode => _editingMode;
+  set editingMode(ListEditingMode value) {
+    if (_editingMode == value) {
+      _editingMode = value;
+      return;
+    }
+    _editingMode = value;
+    notifyListeners('editingMode');
+
+    if (_editingMode == ListEditingMode.none) notes.forEach((n) => n.isSelected = false);
+  }
+
+  int _selectedNotesCount;
+  int get selectedNotesCount => _selectedNotesCount;
+  set selectedNotesCount(int value) {
+    if (_selectedNotesCount == value) {
+      _selectedNotesCount = value;
+      return;
+    }
+    _selectedNotesCount = value;
+    notifyListeners('selectedNotesCount');
+  }
+
+  List<NoteItemModel> _notes;
+  List<NoteItemModel> get notes => _notes;
+  set notes(List<NoteItemModel> value) {
+    if (_notes == value) {
+      _notes = value;
+      return;
+    }
+    _notes = value;
+    notifyListeners('notes');
+  }
+
+  @override
+  void dispose() {
+    _tagsStreamSubscription.cancel();
+    _notesStreamSubscription.cancel();
+    super.dispose();
   }
 
   Future<void> signOut() async {
@@ -51,15 +101,55 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> addTag() async {
-    _tagsManager.addTag(TagEntity(id: Uuid().v1(), name: 'Tag ${tags.length + 1}'));
-  }
+  Future<void> onAddNote() => _navigationService.pushModal(ViewNames.addNoteView);
 
-  Future<void> deleteTag() async {
-    for (final tag in tags) {
-      await _tagsManager.deleteTag(TagEntity(id: tag.id, name: tag.name));
+  void onToggleEditingMode() {
+    switch (editingMode) {
+      case ListEditingMode.none:
+        editingMode = ListEditingMode.delete;
+        break;
+      case ListEditingMode.delete:
+        editingMode = ListEditingMode.none;
+        break;
     }
   }
 
-  void _onTagsAdded(List<TagEntity> newTags) => tags = newTags.map((t) => TagItemModel(t.id, t.name)).toList();
+  void selectAllNotes() {
+    notes.forEach((n) => n.isSelected = true);
+    selectedNotesCount = notes.where((n) => n.isSelected).length;
+  }
+
+  void onToggleNoteSelection(NoteItemModel note) {
+    note.isSelected = !note.isSelected;
+    selectedNotesCount = notes.where((n) => n.isSelected).length;
+  }
+
+  Future<void> deleteNotes() async {
+    final notesToBeDeleted = notes.where((n) => n.isSelected);
+    if (notesToBeDeleted.isNotEmpty) {
+      for (final note in notesToBeDeleted) {
+        await _notesManager.deleteNote(NoteEntity(id: note.id));
+      }
+    }
+  }
+
+  void _onNotesAdded(List<NoteEntity> newNotes) {
+    notes = newNotes.map((n) {
+      return NoteItemModel(
+        id: n.id,
+        tagId: n.tagId,
+        title: n.title,
+        content: n.content,
+      );
+    }).toList();
+
+    selectedNotesCount = notes.where((n) => n.isSelected).length;
+  }
+
+  void _onTagsAdded(List<TagEntity> newTags) {
+    final selectedTagModels = tags.where((t) => t.isSelected).toList();
+    final newTagModels = newTags.map((t) => TagItemModel(t.id, t.name)).toList();
+    selectedTagModels.forEach((t1) => newTagModels.firstWhere((t2) => t2.id == t1.id)..isSelected = true);
+    tags = newTagModels;
+  }
 }
