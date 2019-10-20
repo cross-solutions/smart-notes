@@ -19,6 +19,8 @@ abstract class BaseRepository<T extends DataClass> extends DatabaseAccessor<ENot
 
   Stream<List<T>> watchItems() => select(table).watch();
 
+  Future<void> updateItem(T dataObject) => update(table).replace(dataObject as Insertable);
+ 
   @protected
   TableInfo<Table, T> get table => db.allTables.firstWhere((t) => t.actualTableName == tableName);
 }

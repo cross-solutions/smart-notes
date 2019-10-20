@@ -12,6 +12,7 @@ class NoteListItem extends StatelessWidget {
     @required this.isIndexEven,
     @required this.onToggleNoteSelection,
     @required this.onToggleEditingMode,
+    @required this.onViewNote,
   }) : super(key: key);
 
   final NoteItemModel model;
@@ -19,6 +20,7 @@ class NoteListItem extends StatelessWidget {
   final bool isIndexEven;
   final void Function(NoteItemModel note) onToggleNoteSelection;
   final void Function() onToggleEditingMode;
+  final void Function(NoteItemModel note) onViewNote;
 
   @override
   Widget build(BuildContext context) {
@@ -39,47 +41,85 @@ class NoteListItem extends StatelessWidget {
             effectiveCardElevation = 4.0;
           }
 
-          return Card(
-            key: Key(model.id),
-            elevation: effectiveCardElevation,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            margin: const EdgeInsets.all(0.0),
-            child: InkWell(
-              onLongPress: () {
-                if (!isDeleting) {
-                  onToggleNoteSelection(model);
-                  onToggleEditingMode();
-                }
-              },
-              onTap: () {
-                if (isDeleting) onToggleNoteSelection(model);
-              },
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 250),
-                curve: Curves.easeOutSine,
-                decoration: BoxDecoration(color: effectiveCardColor),
-                padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 16.0),
-                child: ExtendedColumn(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 12.0,
-                  children: <Widget>[
-                    Text(
-                      model.title,
-                      style: effectiveStyle.apply(color: effectiveColor),
-                    ),
-                    Expanded(
-                      child: Text(
-                        model.content,
-                        maxLines: isIndexEven ? 6 : 9,
-                        overflow: TextOverflow.ellipsis,
+          return Hero(
+            tag: model.id,
+            child: Card(
+              elevation: effectiveCardElevation,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              margin: const EdgeInsets.all(0.0),
+              child: InkWell(
+                onLongPress: () {
+                  if (!isDeleting) {
+                    onToggleNoteSelection(model);
+                    onToggleEditingMode();
+                  }
+                },
+                onTap: () {
+                  if (isDeleting)
+                    onToggleNoteSelection(model);
+                  else
+                    onViewNote(model);
+                },
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 250),
+                  curve: Curves.easeOutSine,
+                  decoration: BoxDecoration(color: effectiveCardColor),
+                  padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 16.0),
+                  child: ExtendedColumn(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 12.0,
+                    children: <Widget>[
+                      Text(
+                        model.title,
+                        style: effectiveStyle.apply(color: effectiveColor),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: Text(
+                          model.content,
+                          maxLines: isIndexEven ? 6 : 9,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class NoteDetailView extends StatelessWidget {
+  const NoteDetailView({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    NoteItemModel model = ModalRoute.of(context).settings.arguments;
+    return Hero(
+      tag: model.id,
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Container(
+          padding: const EdgeInsets.all(16.0),
+          child: ExtendedColumn(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12.0,
+            children: <Widget>[
+              Text(
+                model.title,
+                style: Theme.of(context).textTheme.title,
+              ),
+              Expanded(
+                child: Text(
+                  model.content,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

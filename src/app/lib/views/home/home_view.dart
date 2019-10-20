@@ -24,10 +24,16 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
       child: ScopedModelDescendant<HomeViewModel>(
         builder: (context, child, viewModel) {
           final isDeleting = viewModel.editingMode == ListEditingMode.delete;
-          return Scaffold(
-            appBar: _buildAppBar(isDeleting),
-            body: _buildBody(isDeleting),
-            floatingActionButton: _buildFloatingActionButton(isDeleting),
+          return WillPopScope(
+            onWillPop: () async {
+              viewModel.onToggleEditingMode();
+              return !isDeleting;
+            },
+            child: Scaffold(
+              appBar: _buildAppBar(isDeleting),
+              body: _buildBody(isDeleting),
+              floatingActionButton: _buildFloatingActionButton(isDeleting),
+            ),
           );
         },
       ),
@@ -56,15 +62,19 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                       height: 56.0,
                       child: CachedNetworkImage(
                         imageUrl: viewModel.currentAccount.imageUrl,
-                        imageBuilder: (context, imageProvider) => CircleAvatar(
-                          backgroundImage: imageProvider,
-                          radius: 28.0,
-                          backgroundColor: Theme.of(context).primaryColor,
-                        ),
-                        placeholder: (context, url) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CircularProgressIndicator(),
-                        ),
+                        imageBuilder: (context, imageProvider) {
+                          return CircleAvatar(
+                            backgroundImage: imageProvider,
+                            radius: 28.0,
+                            backgroundColor: Theme.of(context).primaryColor,
+                          );
+                        },
+                        placeholder: (context, url) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(),
+                          );
+                        },
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),

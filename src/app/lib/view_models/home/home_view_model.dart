@@ -131,6 +131,8 @@ class HomeViewModel extends BaseViewModel {
     selectedNotesCount = notes.where((n) => n.isSelected).length;
   }
 
+  Future<void> onViewNote(NoteItemModel note) => _navigationService.pushModal(ViewNames.addNoteView, parameter: note);
+
   void Function() get onDeleteSelectedNotes {
     if (selectedNotesCount == 0)
       return null;

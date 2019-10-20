@@ -1,6 +1,6 @@
 # Smart Notes
 
-A note-taking app powered by Google services such as Google Sign In and Firebase ML Vision.
+A note-taking app using Google services such as Google Sign In, Google Drive, and Firebase ML Vision.
 
 This is an entry to FlutterPH's Online Hackathon.
 

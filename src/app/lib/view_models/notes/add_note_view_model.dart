@@ -1,12 +1,14 @@
+import 'dart:math';
+
+import 'package:app/models/notes/note_item_model.dart';
 import 'package:app/services/services.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
 import 'package:app_util/app_util.dart';
-import 'package:uuid/uuid.dart';
 
-class AddNoteViewModel extends BaseViewModel {
-  AddNoteViewModel(
+class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
+  AddOrEditNoteViewModel(
     this._notesManager,
     this._tagsManager,
     this._cameraService,
@@ -29,13 +31,30 @@ class AddNoteViewModel extends BaseViewModel {
   void Function(String text) _onTextRecognized;
 
   List<TagEntity> tags;
+  NoteItemModel noteToEdit;
+
+  String get titlePlaceholder {
+    final placeholders = ['My awesome note', 'Econ 101', 'Cookie Recipe'];
+    final index = Random().nextInt(placeholders.length);
+
+    return placeholders[index];
+  }
 
   void onTextRecognized(void Function(String text) callback) => _onTextRecognized = callback;
 
-  Future<void> onCreateNote(String title, String content) async {
+  Future<void> onAddOrSaveNote(String title, String content) async {
     try {
       if (title.isEmpty) title = 'Note from ${DateTime.now().toString()}';
-      await _notesManager.addNote(NoteEntity(id: Uuid().v1(), title: title, content: content));
+
+      if (noteToEdit != null) {
+        await _notesManager.updateNote(NoteEntity(
+          id: noteToEdit.id,
+          title: title,
+          content: content,
+        ));
+      } else {
+        await _notesManager.addNote(NoteEntity(title: title, content: content));
+      }
       _navigationService.pop();
     } on Error catch (e) {
       debugError(e.toString());
@@ -55,5 +74,15 @@ class AddNoteViewModel extends BaseViewModel {
 
       await imageFile.delete();
     }
+  }
+
+  Future<void> deleteNoteToEdit() async {
+    await _notesManager.deleteNote(NoteEntity(id: noteToEdit.id));
+    _navigationService.pop();
+  }
+
+  @override
+  void initParameter(NoteItemModel parameter) {
+    noteToEdit = parameter;
   }
 }

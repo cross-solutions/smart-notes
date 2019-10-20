@@ -4,93 +4,126 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class AddNoteView extends ModelBoundWidget<AddNoteViewModel> {
-  AddNoteView(AddNoteViewModel viewModel) : super(viewModel);
+class AddOrEditNoteView extends ModelBoundWidget<AddOrEditNoteViewModel> {
+  AddOrEditNoteView(AddOrEditNoteViewModel viewModel) : super(viewModel);
 
   @override
-  _AddNoteViewState createState() => _AddNoteViewState();
+  _AddOrEditNoteViewState createState() => _AddOrEditNoteViewState();
 }
 
-class _AddNoteViewState extends ModelBoundState<AddNoteView, AddNoteViewModel> {
+class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEditNoteViewModel> {
   final _titleController = TextEditingController();
   final _noteController = TextEditingController();
 
   @override
   void initState() {
-    viewModel.onTextRecognized((text) => _noteController.text = text);
+    viewModel.onTextRecognized((text) {
+      _noteController.text = '${_noteController.text} $text';
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<AddNoteViewModel>(
+    return ScopedModel<AddOrEditNoteViewModel>(
       model: viewModel,
-      child: ScopedModelDescendant<AddNoteViewModel>(
+      child: ScopedModelDescendant<AddOrEditNoteViewModel>(
         builder: (context, child, viewModel) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              actions: <Widget>[
-                FlatButton(
-                  colorBrightness: Theme.of(context).brightness,
-                  child: Text('SAVE'),
-                  onPressed: () => viewModel.onCreateNote(
+          final isEditing = viewModel.noteToEdit != null;
+
+          if (isEditing) {
+            _titleController.text = viewModel.noteToEdit.title;
+            _noteController.text = viewModel.noteToEdit.content;
+            return Hero(
+              tag: viewModel.noteToEdit.id,
+              child: _buildScaffold(context, isEditing),
+            );
+          } else
+            return _buildScaffold(context, isEditing);
+        },
+      ),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context, bool isEditing) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        actions: isEditing
+            ? <Widget>[
+                IconButton(
+                  icon: Icon(MdiIcons.deleteForever),
+                  onPressed: viewModel.deleteNoteToEdit,
+                  tooltip: 'Delete note',
+                ),
+                IconButton(
+                  icon: Icon(MdiIcons.contentSaveEdit),
+                  onPressed: () => viewModel.onAddOrSaveNote(
                     _titleController.text,
                     _noteController.text,
                   ),
+                  tooltip: 'Save edit',
+                )
+              ]
+            : <Widget>[
+                IconButton(
+                  icon: Icon(MdiIcons.contentSave),
+                  onPressed: () => viewModel.onAddOrSaveNote(
+                    _titleController.text,
+                    _noteController.text,
+                  ),
+                  tooltip: 'Save note',
                 )
               ],
-              bottom: PreferredSize(
-                child: Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Take a note',
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                  ),
-                ),
-                preferredSize: Size(double.infinity, 40.0),
-              ),
-            ),
-            body: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                child: ExtendedColumn(
-                  spacing: 24.0,
-                  children: <Widget>[
-                    TextField(
-                      controller: _titleController,
-                      decoration: InputDecoration(
-                        hintText: 'My awesome note',
-                        labelText: 'Title',
-                      ),
-                    ),
-                    TextField(
-                      controller: _noteController,
-                      minLines: 4,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        hintText: 'Pick up dry cleaning...',
-                        labelText: 'Note',
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: Icon(MdiIcons.textRecognition),
-                        onPressed: viewModel.onStartTextRecognitionFromCamera,
-                        tooltip: 'Recognize text',
-                      ),
-                    )
-                  ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text('d'),
+              IconButton(
+                padding: const EdgeInsets.all(0.0),
+                icon: Icon(MdiIcons.textRecognition),
+                onPressed: viewModel.onStartTextRecognitionFromCamera,
+                tooltip: 'Recognize text',
+              )
+            ],
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          child: ExtendedColumn(
+            spacing: 12.0,
+            children: <Widget>[
+              TextField(
+                controller: _titleController,
+                style: Theme.of(context).textTheme.title,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
+                  hintText: viewModel.titlePlaceholder,
                 ),
               ),
-            ),
-          );
-        },
+              TextField(
+                controller: _noteController,
+                minLines: 4,
+                maxLines: null,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
+                  hintText: 'Pick up dry cleaning...',
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
