@@ -9,6 +9,7 @@
 .history
 .svn/
 screenshots
+google-services.json
 
 # IntelliJ related
 *.iml
