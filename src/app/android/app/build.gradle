@@ -29,9 +29,9 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 // Azure DevOps server. The files should be uploaded using
 // the task `Download Secure File`.
 def keyStoreProperties = new Properties()
-def keyStorePropertiesFilePath = System.getenv("AGENT_TEMPDIRECTORY") + "/" + "keystore.properties"
+def keyStorePropertiesFilePath = System.getenv("AGENT_TEMPDIRECTORY") + "/" + "smart_notes_keystore.properties"
 def keyStorePropertiesFile = file(keyStorePropertiesFilePath)
-def keyStoreFilePath = System.getenv("AGENT_TEMPDIRECTORY") + "/" + "your_keystore.jks"
+def keyStoreFilePath = System.getenv("AGENT_TEMPDIRECTORY") + "/" + "smart_notes_keystore.jks"
 def keyStoreFile = file(keyStoreFilePath)
 def canSignWithCIKeyStore = keyStoreFile.exists() && keyStorePropertiesFile.exists()
 if (canSignWithCIKeyStore) {
@@ -74,7 +74,7 @@ android {
         release {
             if (canSignWithCIKeyStore) {
                 println 'Signing with provided keystore file'
-                signingConfig signingConfigs.releaseAzure
+                signingConfig signingConfigs.releaseCI
             } else {
                 println 'Signing with debug keystore file'
                 signingConfig signingConfigs.debug
