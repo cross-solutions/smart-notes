@@ -2,6 +2,8 @@ import 'package:moor_flutter/moor_flutter.dart';
 
 part 'models.g.dart';
 
+// Run `flutter packages pub run build_runner build --delete-conflicting-outputs` in `app_data`
+
 @UseMoor(tables: [Accounts, Tags, Notes])
 class ENotesDatabase extends _$ENotesDatabase {
   ENotesDatabase() : super(FlutterQueryExecutor.inDatabaseFolder(path: 'db_enotes.sqlite'));

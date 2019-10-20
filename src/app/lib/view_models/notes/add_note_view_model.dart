@@ -6,6 +6,7 @@ import 'package:app/view_models/view_models.dart';
 import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
 import 'package:app_util/app_util.dart';
+import 'package:uuid/uuid.dart';
 
 class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
   AddOrEditNoteViewModel(
@@ -53,7 +54,11 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
           content: content,
         ));
       } else {
-        await _notesManager.addNote(NoteEntity(title: title, content: content));
+        await _notesManager.addNote(NoteEntity(
+          id: Uuid().v1(),
+          title: title,
+          content: content,
+        ));
       }
       _navigationService.pop();
     } on Error catch (e) {
