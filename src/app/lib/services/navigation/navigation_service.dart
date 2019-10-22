@@ -19,7 +19,6 @@ class NavigationServiceImpl implements NavigationService {
 
   @override
   Future push<T>(String viewName, {T parameter}) {
-    print('pushing $viewName');
     return _navigator.push(
       MaterialPageRoute(
         builder: (_) => _getViewAndInitParam(viewName, parameter),

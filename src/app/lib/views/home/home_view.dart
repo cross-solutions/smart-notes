@@ -244,10 +244,4 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    print('disposing home view');
-    super.dispose();
-  }
 }

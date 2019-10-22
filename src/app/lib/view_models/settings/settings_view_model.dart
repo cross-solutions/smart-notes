@@ -4,6 +4,7 @@ import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
 import 'package:app_common/constants.dart';
 import 'package:app_common/exceptions.dart';
+import 'package:app_util/app_util.dart';
 
 class SettingsViewModel extends BaseViewModel {
   SettingsViewModel(
@@ -62,7 +63,7 @@ class SettingsViewModel extends BaseViewModel {
       isBackuping = true;
       await _settingsManager.backupNotesToCloud();
     } on AuthException {
-      print('Sign in required');
+      debugInfo('Sign in required');
       _dialogService.alert('Please relogin and try to backup again.', title: 'Session expired');
     } finally {
       isBackuping = false;
@@ -83,7 +84,7 @@ class SettingsViewModel extends BaseViewModel {
         await _settingsManager.restoreNotesFromCloud();
       }
     } on AuthException {
-      print('Sign in required');
+      debugInfo('Sign in required');
       _dialogService.alert('Please relogin and try to restore again.', title: 'Session expired');
     } finally {
       isRestoring = false;
