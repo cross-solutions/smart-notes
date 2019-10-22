@@ -22,8 +22,8 @@ class HomeViewModel extends BaseViewModel {
     editingMode = ListEditingMode.none;
     selectedNotesCount = 0;
 
-    _tagsStreamSubscription = _tagsManager.tagsStream.listen(_onTagsChanged);
-    _notesStreamSubscription = _notesManager.notesStream.listen(_onNotesChanged);
+    _tagsStreamSubscription = _tagsManager.getTagsStream(currentAccount.id).listen(_onTagsChanged);
+    _notesStreamSubscription = _notesManager.getNotesStream(currentAccount.id).listen(_onNotesChanged);
   }
 
   AccountEntity currentAccount;

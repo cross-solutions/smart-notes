@@ -17,10 +17,17 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
 
   @override
   void initState() {
-    viewModel.onTextRecognized((text) {
-      _noteController.text = '${_noteController.text} $text';
-    });
+    _titleController.addListener(() => viewModel.note.title = _titleController.text);
+    _noteController.addListener(() => viewModel.note.content = _noteController.text);
+    viewModel.onTextRecognized((text) => _noteController.text = '${_noteController.text} $text');
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _noteController.dispose();
+    super.dispose();
   }
 
   @override
@@ -29,52 +36,26 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
       model: viewModel,
       child: ScopedModelDescendant<AddOrEditNoteViewModel>(
         builder: (context, child, viewModel) {
-          final isEditing = viewModel.noteToEdit != null;
-
-          if (isEditing) {
-            _titleController.text = viewModel.noteToEdit.title;
-            _noteController.text = viewModel.noteToEdit.content;
+          if (viewModel.isEditing) {
+            _titleController.text = viewModel.note.title;
+            _noteController.text = viewModel.note.content;
             return Hero(
-              tag: viewModel.noteToEdit.id,
-              child: _buildScaffold(context, isEditing),
+              tag: viewModel.note.id,
+              child: _buildScaffold(context),
             );
-          } else
-            return _buildScaffold(context, isEditing);
+          } else {
+            return _buildScaffold(context);
+          }
         },
       ),
     );
   }
 
-  Widget _buildScaffold(BuildContext context, bool isEditing) {
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        actions: isEditing
-            ? <Widget>[
-                IconButton(
-                  icon: Icon(MdiIcons.deleteForever),
-                  onPressed: viewModel.deleteNoteToEdit,
-                  tooltip: 'Delete note',
-                ),
-                IconButton(
-                  icon: Icon(MdiIcons.contentSaveEdit),
-                  onPressed: () => viewModel.onAddOrSaveNote(
-                    _titleController.text,
-                    _noteController.text,
-                  ),
-                  tooltip: 'Save edit',
-                )
-              ]
-            : <Widget>[
-                IconButton(
-                  icon: Icon(MdiIcons.contentSave),
-                  onPressed: () => viewModel.onAddOrSaveNote(
-                    _titleController.text,
-                    _noteController.text,
-                  ),
-                  tooltip: 'Save note',
-                )
-              ],
+        actions: viewModel.isEditing ? _buildEditActions() : _buildSaveActions(),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Padding(
@@ -82,7 +63,7 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('d'),
+              Text('Take a note'),
               IconButton(
                 padding: const EdgeInsets.all(0.0),
                 icon: Icon(MdiIcons.textRecognition),
@@ -107,18 +88,19 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
                   contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
                   border: OutlineInputBorder(borderSide: BorderSide.none),
                   focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
-                  hintText: viewModel.titlePlaceholder,
+                  hintText: 'My awesome note',
                 ),
               ),
               TextField(
                 controller: _noteController,
                 minLines: 4,
+                autofocus: !viewModel.isEditing,
                 maxLines: null,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
                   border: OutlineInputBorder(borderSide: BorderSide.none),
                   focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
-                  hintText: 'Pick up dry cleaning...',
+                  hintText: 'What\'s on your mind?',
                 ),
               ),
             ],
@@ -126,5 +108,30 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
         ),
       ),
     );
+  }
+
+  List<Widget> _buildSaveActions() {
+    return <Widget>[
+      IconButton(
+        icon: Icon(MdiIcons.contentSave),
+        onPressed: viewModel.onSaveNote,
+        tooltip: 'Save note',
+      )
+    ];
+  }
+
+  List<Widget> _buildEditActions() {
+    return <Widget>[
+      IconButton(
+        icon: Icon(MdiIcons.deleteForever),
+        onPressed: viewModel.deleteNoteToEdit,
+        tooltip: 'Delete note',
+      ),
+      IconButton(
+        icon: Icon(MdiIcons.contentSaveEdit),
+        onPressed: viewModel.onSaveEditedNote,
+        tooltip: 'Save edit',
+      )
+    ];
   }
 }

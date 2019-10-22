@@ -1,70 +1,62 @@
-import 'dart:math';
-
 import 'package:app/models/notes/note_item_model.dart';
 import 'package:app/services/services.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
-import 'package:app_util/app_util.dart';
 import 'package:uuid/uuid.dart';
 
 class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
   AddOrEditNoteViewModel(
     this._notesManager,
     this._tagsManager,
+    this._accountManager,
     this._cameraService,
     this._mlVisionService,
     this._navigationService,
-    this._dialogService,
   ) {
     _tagsManager.tags.then((tags) {
       this.tags = tags;
     });
+    note = NoteItemModel();
+    isEditing = false;
   }
 
   final NotesManager _notesManager;
   final TagsManager _tagsManager;
+  final AccountManager _accountManager;
   final CameraService _cameraService;
   final MLVisionService _mlVisionService;
   final NavigationService _navigationService;
-  final DialogService _dialogService;
 
   void Function(String text) _onTextRecognized;
 
   List<TagEntity> tags;
-  NoteItemModel noteToEdit;
+  NoteItemModel note;
 
-  String get titlePlaceholder {
-    final placeholders = ['My awesome note', 'Econ 101', 'Cookie Recipe'];
-    final index = Random().nextInt(placeholders.length);
-
-    return placeholders[index];
-  }
+  bool isEditing;
 
   void onTextRecognized(void Function(String text) callback) => _onTextRecognized = callback;
 
-  Future<void> onAddOrSaveNote(String title, String content) async {
-    try {
-      if (title.isEmpty) title = 'Note from ${DateTime.now().toString()}';
+  Future<void> onSaveNote() async {
+    await _notesManager.addNote(NoteEntity(
+      id: Uuid().v1(),
+      title: note.title ?? 'Note from ${DateTime.now().toString()}',
+      content: note.content,
+      ownedBy: _accountManager.currentAccount.id,
+    ));
 
-      if (noteToEdit != null) {
-        await _notesManager.updateNote(NoteEntity(
-          id: noteToEdit.id,
-          title: title,
-          content: content,
-        ));
-      } else {
-        await _notesManager.addNote(NoteEntity(
-          id: Uuid().v1(),
-          title: title,
-          content: content,
-        ));
-      }
-      _navigationService.pop();
-    } on Error catch (e) {
-      debugError(e.toString());
-      await _dialogService.alert('Sorry, we could not create your note.', title: 'Failed to create note');
-    }
+    _navigationService.pop();
+  }
+
+  Future<void> onSaveEditedNote() async {
+    await _notesManager.updateNote(NoteEntity(
+      id: note.id,
+      title: note.title ?? 'Note from ${DateTime.now().toString()}',
+      content: note.content,
+      ownedBy: _accountManager.currentAccount.id,
+    ));
+
+    _navigationService.pop();
   }
 
   Future<void> onStartTextRecognitionFromCamera() async {
@@ -82,12 +74,15 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
   }
 
   Future<void> deleteNoteToEdit() async {
-    await _notesManager.deleteNote(NoteEntity(id: noteToEdit.id));
+    await _notesManager.deleteNote(NoteEntity(id: note.id));
     _navigationService.pop();
   }
 
   @override
   void initParameter(NoteItemModel parameter) {
-    noteToEdit = parameter;
+    if (parameter != null) {
+      note = parameter;
+      isEditing = true;
+    }
   }
 }

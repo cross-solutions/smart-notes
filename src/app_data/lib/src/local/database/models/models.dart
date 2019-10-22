@@ -33,6 +33,8 @@ class Tags extends Table {
 
   TextColumn get id => text()();
 
+  TextColumn get ownedBy => text().nullable()();
+
   TextColumn get name => text()();
 }
 
@@ -42,6 +44,8 @@ class Notes extends Table {
   Set<Column> get primaryKey => {id};
 
   TextColumn get id => text()();
+
+  TextColumn get ownedBy => text().nullable()();
 
   TextColumn get title => text()();
 

@@ -3,7 +3,7 @@ import 'package:app_business/src/mappers/notes/notes_mapper.dart';
 import 'package:app_data/database.dart';
 
 abstract class NotesManager {
-  Stream<List<NoteEntity>> get notesStream;
+  Stream<List<NoteEntity>> getNotesStream(String ownedBy);
 
   Future<void> addNote(NoteEntity note);
 
@@ -20,7 +20,7 @@ class NotesManagerImpl implements NotesManager {
 
   @override
   Future<void> addNote(NoteEntity note) async {
-    final noteDO = _notesMapper.toDataObject(note);
+    var noteDO = _notesMapper.toDataObject(note);
     await _notesRepository.insertItem(noteDO);
   }
 
@@ -31,8 +31,8 @@ class NotesManagerImpl implements NotesManager {
   }
 
   @override
-  Stream<List<NoteEntity>> get notesStream async* {
-    await for (final noteDOs in _notesRepository.watchItems()) {
+  Stream<List<NoteEntity>> getNotesStream(String ownedBy) async* {
+    await for (final noteDOs in _notesRepository.watchOwnedNotes(ownedBy)) {
       yield noteDOs.map((n) => _notesMapper.toEntity(n)).toList();
     }
   }
