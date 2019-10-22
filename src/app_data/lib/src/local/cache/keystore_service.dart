@@ -9,7 +9,7 @@ abstract class KeyStoreService {
 
   Future<void> set(String key, String value);
 
-  Future<void> setJson(String key, Map<String, String> value);
+  Future<void> setJson(String key, Map<String, dynamic> value);
 
   Future<Map<String, String>> getJson(String key);
 }
@@ -28,12 +28,20 @@ class KeyStoreServiceImpl implements KeyStoreService {
 
   @override
   Future<Map<String, String>> getJson(String key) async {
-    final json = await _storage.read(key: key);
-    return jsonDecode(json);
+    final jsonString = await _storage.read(key: key);
+    Map<String, dynamic> json = jsonDecode(jsonString);
+    final resultJson = Map<String, String>();
+
+    json.keys.forEach((k) {
+      resultJson.putIfAbsent(k, () => json[k]);
+      resultJson[k] = json[k];
+    });
+
+    return resultJson;
   }
 
   @override
-  Future<void> setJson(String key, Map<String, String> value) async {
+  Future<void> setJson(String key, Map<String, dynamic> value) async {
     final json = jsonEncode(value);
     await _storage.write(key: key, value: json);
   }

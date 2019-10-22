@@ -3,6 +3,7 @@ import 'package:app/resources/localization/i18n.dart';
 import 'package:app/resources/resources.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app/widgets/widgets.dart';
+import 'package:app_business/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -32,7 +33,7 @@ class _AppViewState extends ModelBoundState<AppView, AppViewModel> {
     return MaterialApp(
       title: 'eNotes',
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
+      themeMode: viewModel.settings.themeConfig == ThemeConfig.dark ? ThemeMode.dark : ThemeMode.light,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       navigatorKey: AppViewKeys.navigator,

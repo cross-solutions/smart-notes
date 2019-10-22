@@ -16,6 +16,8 @@ abstract class BaseRepository<TTable extends Table, TDataObject extends DataClas
 
   Future<void> insertItem(TDataObject dataObject) => into(table).insert(dataObject as Insertable);
 
+  Future<void> insertItems(List<TDataObject> dataObject) => into(table).insertAll(dataObject as List<Insertable>);
+
   Stream<List<TDataObject>> watchItems() => select(table).watch();
 
   Future<void> updateItem(TDataObject dataObject) => update(table).replace(dataObject as Insertable);

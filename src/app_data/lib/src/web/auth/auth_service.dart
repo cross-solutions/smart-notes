@@ -14,6 +14,7 @@ abstract class AuthService {
 
 class AuthServiceImpl extends AuthService {
   final _googleAuth = GoogleSignIn(
+    
     scopes: <String>[
       'email',
       DriveApi.DriveAppdataScope,

@@ -37,8 +37,9 @@ class NavigationServiceImpl implements NavigationService {
   }
 
   @override
-  Future pushReplacement(String viewName, {Object parameter}) {
-    return _navigator.pushReplacement(
+  Future pushReplacement(String viewName, {Object parameter}) async {
+    _navigator.popUntil((route) => route.isFirst);
+    await _navigator.pushReplacement(
       MaterialPageRoute(
         builder: (_) => _getViewAndInitParam(viewName, parameter),
       ),

@@ -27,10 +27,12 @@ class ServiceLocator {
       ..registerFactory<Widget>(() => HomeView(i.get<HomeViewModel>()), instanceName: ViewNames.homeView)
       ..registerFactory<Widget>(() => AddOrEditNoteView(i.get<AddOrEditNoteViewModel>()),
           instanceName: ViewNames.addNoteView)
+      ..registerFactory<Widget>(() => SettingsView(i.get<SettingsViewModel>()), instanceName: ViewNames.settingsView)
 
       // Register View Models
       ..registerLazySingleton<AppViewModel>(() => AppViewModel(
             i.get<AuthManager>(),
+            i.get<SettingsManager>(),
             i.get<AnalyticsService>(),
             i.get<NavigationService>(),
           ))
@@ -55,6 +57,12 @@ class ServiceLocator {
             i.get<MLVisionService>(),
             i.get<NavigationService>(),
           ))
+      ..registerFactory<SettingsViewModel>(() => SettingsViewModel(
+            i.get<AuthManager>(),
+            i.get<SettingsManager>(),
+            i.get<NavigationService>(),
+            i.get<DialogService>(),
+          ))
 
       // Register Services
       ..registerLazySingleton<NavigationService>(() => NavigationServiceImpl())
@@ -71,6 +79,7 @@ class ServiceLocator {
             i.get<AccountRepository>(),
           ))
       ..registerLazySingleton<AccountManager>(() => AccountManagerImpl())
+      ..registerLazySingleton<SettingsManager>(() => SettingsManagerImpl(i.get<CacheService>(), i.get<DriveService>()))
       ..registerLazySingleton<TagsManager>(() => TagsManagerImpl(i.get<TagsRepository>(), i.get<TagMapper>()))
       ..registerLazySingleton<NotesManager>(() => NotesManagerImpl(i.get<NotesRepository>(), i.get<NotesMapper>()))
 
@@ -90,6 +99,8 @@ class ServiceLocator {
 
       // Register Web
       ..registerLazySingleton<AuthService>(() => AuthServiceImpl())
+      ..registerLazySingleton<DriveService>(
+          () => DriveServiceImpl(i.get<KeyStoreService>(), i.get<NotesRepository>(), i.get<TagsRepository>()))
 
       // Register Utilities
       ..registerLazySingleton<AnalyticsService>(() => AnalyticsServiceImpl());
