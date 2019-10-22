@@ -54,7 +54,6 @@ class ServiceLocator {
             i.get<CameraService>(),
             i.get<MLVisionService>(),
             i.get<NavigationService>(),
-            i.get<DialogService>(),
           ))
 
       // Register Services
