@@ -87,17 +87,8 @@ class HomeViewModel extends BaseViewModel {
     super.dispose();
   }
 
-  Future<void> signOut() async {
-    final shouldLogout = await _dialogService.confirm(
-      'Are you sure you want to logout?',
-      title: 'Logout account',
-      ok: 'Logout',
-    );
-
-    if (shouldLogout == true) {
-      await _authManager.signOut();
-      await _navigationService.pushReplacement(ViewNames.loginView);
-    }
+  Future<void> onShowSettings() async {
+    await _navigationService.push(ViewNames.settingsView);
   }
 
   Future<void> onAddNote() => _navigationService.pushModal(ViewNames.addNoteView);

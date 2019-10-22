@@ -1,84 +1,145 @@
-// import 'dart:convert';
+import 'dart:convert';
 
-// import 'package:app_data/src/dto/drive/drive_data_dto.dart';
-// import 'package:app_data/src/web/drive/drive_http_client.dart';
-// import 'package:app_util/app_util.dart';
-// import 'package:googleapis/drive/v3.dart';
-// import 'dart:io' as io;
+import 'package:app_common/constants.dart';
+import 'package:app_common/exceptions.dart';
+import 'package:app_data/database.dart';
+import 'package:app_data/src/local/cache/keystore_service.dart';
+import 'package:app_data/src/local/database/repositories/notes/notes_repository.dart';
+import 'package:app_data/src/web/drive/drive_http_client.dart';
+import 'package:app_data/src/web/dto/backup_dto.dart';
+import 'package:app_util/app_util.dart';
+import 'package:googleapis/drive/v3.dart';
 
-// import 'package:path_provider/path_provider.dart';
+abstract class DriveService {
+  Future<File> getSavedNotesFromCloud();
 
-// abstract class DriveService {
-//   Future<void> createDataFileIfNotExist();
+  Future<void> backupNotesToCloud();
 
-//   Future<void> cleanUpLocalDataFile();
-// }
+  Future<void> restoreNotesFromCloud();
+}
 
-// class DriveServiceImpl implements DriveService {
-//   static const _dataFileName = 'enotes_data';
-//   static const _dataFileMimeType = 'application/json';
+class DriveServiceImpl implements DriveService {
+  DriveServiceImpl(
+    this._keyStoreService,
+    this._notesRepository,
+    this._tagsRepository,
+  );
 
-//   @override
-//   Future<void> createDataFileIfNotExist() async {
-//     final client = DriveHttpClient();
-//     final appDataPath = await getApplicationDocumentsDirectory();
+  final KeyStoreService _keyStoreService;
+  final NotesRepository _notesRepository;
+  final TagsRepository _tagsRepository;
 
-//     try {
-//       final driveApi = DriveApi(client);
-//       final fileList = await driveApi.files.list(
-//         spaces: 'appDataFolder',
-//         q: 'name=\'$_dataFileName\' and mimeType=\'$_dataFileMimeType\' and trashed=false',
-//       );
+  static const _dataFileName = 'smart_notes_data';
+  static const _dataFileMimeType = 'application/json';
 
-//       if (fileList.files.isEmpty) {
-//         debugInfo('Data file does not exists in Google Drive, creating...');
+  @override
+  Future<File> getSavedNotesFromCloud() async {
+    final client = await createClient();
 
-//         final appInitialData = DriveDataDto(tags: [], notes: []);
-//         final localDataFile = io.File('${appDataPath.path}/$_dataFileName.json');
-//         final appInitialDataJson = jsonEncode(appInitialData.toJson());
+    try {
+      final driveApi = DriveApi(client);
+      final driveResponse = await driveApi.files.list(
+        spaces: 'appDataFolder',
+        q: 'name=\'$_dataFileName\' and mimeType=\'$_dataFileMimeType\' and trashed=false',
+      );
 
-//         await localDataFile.create();
-//         await localDataFile.writeAsString(appInitialDataJson);
+      if (driveResponse.files.isNotEmpty) {
+        return null;
+      } else
+        return null;
+    } on DetailedApiRequestError catch (dex) {
+      if (dex.status == 401)
+        throw AuthException('Session expired');
+      else
+        rethrow;
+    } finally {
+      client.close();
+    }
+  }
 
-//         //TODO: For syncing functionality.
-//         // final length = await localDataFile.length();
-//         // final stream = localDataFile.openRead();
-//         // final uploadMedia = Media(stream, length, contentType: '$_dataFileMimeType');
+  @override
+  Future<void> backupNotesToCloud() async {
+    final client = await createClient();
 
-//         // final appDriveFile = File();
-//         // appDriveFile.parents = ['appDataFolder'];
-//         // appDriveFile.mimeType = '$_dataFileMimeType';
-//         // appDriveFile.name = _dataFileName;
-//         // await driveApi.files.create(appDriveFile, uploadMedia: uploadMedia);
-//       } else {
-//         final localDataFile = io.File('${appDataPath.path}/$_dataFileName.json');
-//         final localDataFileExists = await localDataFile.exists();
+    try {
+      final driveApi = DriveApi(client);
+      final notes = await _notesRepository.selectAll(); //TODO: Get only user's tags and notes.
+      final tags = await _tagsRepository.selectAll();
+      final backupDto = BackupDto(notes: notes, tags: tags);
+      final backupDataJson = backupDto.toJson();
+      final backupDataJsonString = jsonEncode(backupDataJson);
+      final backupDataBytes = utf8.encode(backupDataJsonString);
+      final backupDataStream = Stream.value(backupDataBytes);
+      final length = backupDataBytes.length;
+      final uploadMedia = Media(backupDataStream, length, contentType: '$_dataFileMimeType');
+      final appDriveFile = File();
+      appDriveFile.mimeType = '$_dataFileMimeType';
+      appDriveFile.name = _dataFileName;
 
-//         if (!localDataFileExists) {
-//           debugInfo('Downloading data file from Google Drive...');
-//           Media file = await driveApi.files.get(fileList.files.first.id, downloadOptions: DownloadOptions.FullMedia);
-//           final appDataJson = await utf8.decodeStream(file.stream);
-//           await localDataFile.create();
-//           await localDataFile.writeAsString(appDataJson);
-//         } else {
-//           debugInfo('Local data file exists.');
-//         }
-//       }
-//     } finally {
-//       client.close();
-//     }
-//   }
+      final driveResponse = await driveApi.files.list(
+        spaces: 'appDataFolder',
+        q: 'name=\'$_dataFileName\' and mimeType=\'$_dataFileMimeType\' and trashed=false',
+      );
 
-//   @override
-//   Future<void> cleanUpLocalDataFile() async {
-//     final appDataPath = await getApplicationDocumentsDirectory();
-//     final localDataFile = io.File('${appDataPath.path}/$_dataFileName.json');
-//     final localDataFileExists = await localDataFile.exists();
+      if (driveResponse.files.isEmpty) {
+        debugInfo('Creating backup file...');
+        appDriveFile.parents = ['appDataFolder'];
+        await driveApi.files.create(appDriveFile, uploadMedia: uploadMedia);
+      } else {
+        debugInfo('Updating backup file...');
+        final existingBackupData = driveResponse.files.first;
+        await driveApi.files.update(appDriveFile, existingBackupData.id, uploadMedia: uploadMedia);
+      }
+    } on DetailedApiRequestError catch (dex) {
+      if (dex.status == 401)
+        throw AuthException('Session expired');
+      else
+        rethrow;
+    } finally {
+      client.close();
+    }
+  }
 
-//     if (localDataFileExists) {
-//       //TODO: Add sync to Google Drive.
-//       debugInfo('Deleting local data file...');
-//       await localDataFile.delete();
-//     }
-//   }
-// }
+  Future<DriveHttpClient> createClient() async {
+    final headers = await _keyStoreService.getJson(StorageKeys.authHeader);
+    return DriveHttpClient(headers);
+  }
+
+  @override
+  Future<void> restoreNotesFromCloud() async {
+    final client = await createClient();
+
+    try {
+      final driveApi = DriveApi(client);
+      final driveResponse = await driveApi.files.list(
+        spaces: 'appDataFolder',
+        q: 'name=\'$_dataFileName\' and mimeType=\'$_dataFileMimeType\' and trashed=false',
+      );
+      if (driveResponse.files.isNotEmpty) {
+        Media file = await driveApi.files.get(driveResponse.files.first.id, downloadOptions: DownloadOptions.FullMedia);
+        final appDataJsonString = await utf8.decodeStream(file.stream);
+        final appDatajson = jsonDecode(appDataJsonString);
+        final backupDto = BackupDto.fromJson(appDatajson);
+
+        debugInfo('Deleting local notes...');
+        await _notesRepository.deleteAll();
+
+        debugInfo('Deleting local tags...');
+        await _tagsRepository.deleteAll();
+
+        debugInfo('Restoring ${backupDto.notes.length} notes...');
+        await _notesRepository.insertItems(backupDto.notes);
+
+        debugInfo('Restoring ${backupDto.tags.length} tags...');
+        await _tagsRepository.insertItems(backupDto.tags);
+      }
+    } on DetailedApiRequestError catch (dex) {
+      if (dex.status == 401)
+        throw AuthException('Session expired');
+      else
+        rethrow;
+    } finally {
+      client.close();
+    }
+  }
+}

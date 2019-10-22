@@ -19,6 +19,7 @@ class NavigationServiceImpl implements NavigationService {
 
   @override
   Future push<T>(String viewName, {T parameter}) {
+    print('pushing $viewName');
     return _navigator.push(
       MaterialPageRoute(
         builder: (_) => _getViewAndInitParam(viewName, parameter),
@@ -37,8 +38,9 @@ class NavigationServiceImpl implements NavigationService {
   }
 
   @override
-  Future pushReplacement(String viewName, {Object parameter}) {
-    return _navigator.pushReplacement(
+  Future pushReplacement(String viewName, {Object parameter}) async {
+    _navigator.popUntil((route) => route.isFirst);
+    await _navigator.pushReplacement(
       MaterialPageRoute(
         builder: (_) => _getViewAndInitParam(viewName, parameter),
       ),

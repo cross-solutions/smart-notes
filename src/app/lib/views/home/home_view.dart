@@ -95,9 +95,9 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                   ],
                 ),
                 IconButton(
-                  icon: Icon(MdiIcons.logout),
-                  onPressed: viewModel.signOut,
-                  tooltip: 'Logout',
+                  icon: Icon(MdiIcons.settings),
+                  onPressed: viewModel.onShowSettings,
+                  tooltip: 'Settings',
                 ),
               ],
             ),
@@ -243,5 +243,11 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    print('disposing home view');
+    super.dispose();
   }
 }
