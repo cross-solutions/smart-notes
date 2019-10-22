@@ -91,36 +91,3 @@ class NoteListItem extends StatelessWidget {
     );
   }
 }
-
-class NoteDetailView extends StatelessWidget {
-  const NoteDetailView({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    NoteItemModel model = ModalRoute.of(context).settings.arguments;
-    return Hero(
-      tag: model.id,
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: ExtendedColumn(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 12.0,
-            children: <Widget>[
-              Text(
-                model.title,
-                style: Theme.of(context).textTheme.title,
-              ),
-              Expanded(
-                child: Text(
-                  model.content,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

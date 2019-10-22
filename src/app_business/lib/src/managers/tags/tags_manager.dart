@@ -5,7 +5,7 @@ import 'package:app_data/database.dart';
 abstract class TagsManager {
   Future<List<TagEntity>> get tags;
 
-  Stream<List<TagEntity>> get tagsStream;
+  Stream<List<TagEntity>> getTagsStream(String ownedBy);
 
   Future<TagEntity> getTag(String id);
 
@@ -21,8 +21,8 @@ class TagsManagerImpl implements TagsManager {
   final TagMapper _tagMapper;
 
   @override
-  Stream<List<TagEntity>> get tagsStream async* {
-    await for (final tagDOs in _tagsRepository.watchItems()) {
+  Stream<List<TagEntity>> getTagsStream(String ownedBy) async* {
+    await for (final tagDOs in _tagsRepository.watchOwnedTags(ownedBy)) {
       yield tagDOs.map((t) => _tagMapper.toEntity(t)).toList();
     }
   }
@@ -51,7 +51,7 @@ class TagsManagerImpl implements TagsManager {
   }
 
   @override
-  Future<List<TagEntity>> get tags async{
+  Future<List<TagEntity>> get tags async {
     final results = await _tagsRepository.selectAll();
     return results.map((t) => _tagMapper.toEntity(t)).toList();
   }

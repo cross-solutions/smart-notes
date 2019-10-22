@@ -7,29 +7,20 @@ part of 'models.dart';
 // **************************************************************************
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
-class AccountDataObject extends DataClass
-    implements Insertable<AccountDataObject> {
+class AccountDataObject extends DataClass implements Insertable<AccountDataObject> {
   final String id;
   final String name;
   final String email;
   final String imageUrl;
-  AccountDataObject(
-      {@required this.id,
-      @required this.name,
-      @required this.email,
-      @required this.imageUrl});
-  factory AccountDataObject.fromData(
-      Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+  AccountDataObject({@required this.id, @required this.name, @required this.email, @required this.imageUrl});
+  factory AccountDataObject.fromData(Map<String, dynamic> data, GeneratedDatabase db, {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     return AccountDataObject(
       id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
-      email:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}email']),
-      imageUrl: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}image_url']),
+      email: stringType.mapFromDatabaseResponse(data['${effectivePrefix}email']),
+      imageUrl: stringType.mapFromDatabaseResponse(data['${effectivePrefix}image_url']),
     );
   }
   factory AccountDataObject.fromJson(Map<String, dynamic> json,
@@ -42,8 +33,7 @@ class AccountDataObject extends DataClass
     );
   }
   @override
-  Map<String, dynamic> toJson(
-      {ValueSerializer serializer = const ValueSerializer.defaults()}) {
+  Map<String, dynamic> toJson({ValueSerializer serializer = const ValueSerializer.defaults()}) {
     return {
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
@@ -57,17 +47,12 @@ class AccountDataObject extends DataClass
     return AccountsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      email:
-          email == null && nullToAbsent ? const Value.absent() : Value(email),
-      imageUrl: imageUrl == null && nullToAbsent
-          ? const Value.absent()
-          : Value(imageUrl),
+      email: email == null && nullToAbsent ? const Value.absent() : Value(email),
+      imageUrl: imageUrl == null && nullToAbsent ? const Value.absent() : Value(imageUrl),
     );
   }
 
-  AccountDataObject copyWith(
-          {String id, String name, String email, String imageUrl}) =>
-      AccountDataObject(
+  AccountDataObject copyWith({String id, String name, String email, String imageUrl}) => AccountDataObject(
         id: id ?? this.id,
         name: name ?? this.name,
         email: email ?? this.email,
@@ -85,8 +70,7 @@ class AccountDataObject extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(name.hashCode, $mrjc(email.hashCode, imageUrl.hashCode))));
+  int get hashCode => $mrjf($mrjc(id.hashCode, $mrjc(name.hashCode, $mrjc(email.hashCode, imageUrl.hashCode))));
   @override
   bool operator ==(other) =>
       identical(this, other) ||
@@ -117,11 +101,7 @@ class AccountsCompanion extends UpdateCompanion<AccountDataObject> {
         name = Value(name),
         email = Value(email),
         imageUrl = Value(imageUrl);
-  AccountsCompanion copyWith(
-      {Value<String> id,
-      Value<String> name,
-      Value<String> email,
-      Value<String> imageUrl}) {
+  AccountsCompanion copyWith({Value<String> id, Value<String> name, Value<String> email, Value<String> imageUrl}) {
     return AccountsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -131,8 +111,7 @@ class AccountsCompanion extends UpdateCompanion<AccountDataObject> {
   }
 }
 
-class $AccountsTable extends Accounts
-    with TableInfo<$AccountsTable, AccountDataObject> {
+class $AccountsTable extends Accounts with TableInfo<$AccountsTable, AccountDataObject> {
   final GeneratedDatabase _db;
   final String _alias;
   $AccountsTable(this._db, [this._alias]);
@@ -193,8 +172,7 @@ class $AccountsTable extends Accounts
   @override
   final String actualTableName = 'accounts';
   @override
-  VerificationContext validateIntegrity(AccountsCompanion d,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(AccountsCompanion d, {bool isInserting = false}) {
     final context = VerificationContext();
     if (d.id.present) {
       context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
@@ -202,20 +180,17 @@ class $AccountsTable extends Accounts
       context.missing(_idMeta);
     }
     if (d.name.present) {
-      context.handle(
-          _nameMeta, name.isAcceptableValue(d.name.value, _nameMeta));
+      context.handle(_nameMeta, name.isAcceptableValue(d.name.value, _nameMeta));
     } else if (name.isRequired && isInserting) {
       context.missing(_nameMeta);
     }
     if (d.email.present) {
-      context.handle(
-          _emailMeta, email.isAcceptableValue(d.email.value, _emailMeta));
+      context.handle(_emailMeta, email.isAcceptableValue(d.email.value, _emailMeta));
     } else if (email.isRequired && isInserting) {
       context.missing(_emailMeta);
     }
     if (d.imageUrl.present) {
-      context.handle(_imageUrlMeta,
-          imageUrl.isAcceptableValue(d.imageUrl.value, _imageUrlMeta));
+      context.handle(_imageUrlMeta, imageUrl.isAcceptableValue(d.imageUrl.value, _imageUrlMeta));
     } else if (imageUrl.isRequired && isInserting) {
       context.missing(_imageUrlMeta);
     }
@@ -256,15 +231,15 @@ class $AccountsTable extends Accounts
 
 class TagDataObject extends DataClass implements Insertable<TagDataObject> {
   final String id;
+  final String ownedBy;
   final String name;
-  TagDataObject({@required this.id, @required this.name});
-  factory TagDataObject.fromData(
-      Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+  TagDataObject({@required this.id, this.ownedBy, @required this.name});
+  factory TagDataObject.fromData(Map<String, dynamic> data, GeneratedDatabase db, {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     return TagDataObject(
       id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      ownedBy: stringType.mapFromDatabaseResponse(data['${effectivePrefix}owned_by']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
     );
   }
@@ -272,14 +247,15 @@ class TagDataObject extends DataClass implements Insertable<TagDataObject> {
       {ValueSerializer serializer = const ValueSerializer.defaults()}) {
     return TagDataObject(
       id: serializer.fromJson<String>(json['id']),
+      ownedBy: serializer.fromJson<String>(json['ownedBy']),
       name: serializer.fromJson<String>(json['name']),
     );
   }
   @override
-  Map<String, dynamic> toJson(
-      {ValueSerializer serializer = const ValueSerializer.defaults()}) {
+  Map<String, dynamic> toJson({ValueSerializer serializer = const ValueSerializer.defaults()}) {
     return {
       'id': serializer.toJson<String>(id),
+      'ownedBy': serializer.toJson<String>(ownedBy),
       'name': serializer.toJson<String>(name),
     };
   }
@@ -288,48 +264,53 @@ class TagDataObject extends DataClass implements Insertable<TagDataObject> {
   TagsCompanion createCompanion(bool nullToAbsent) {
     return TagsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      ownedBy: ownedBy == null && nullToAbsent ? const Value.absent() : Value(ownedBy),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
     );
   }
 
-  TagDataObject copyWith({String id, String name}) => TagDataObject(
+  TagDataObject copyWith({String id, String ownedBy, String name}) => TagDataObject(
         id: id ?? this.id,
+        ownedBy: ownedBy ?? this.ownedBy,
         name: name ?? this.name,
       );
   @override
   String toString() {
     return (StringBuffer('TagDataObject(')
           ..write('id: $id, ')
+          ..write('ownedBy: $ownedBy, ')
           ..write('name: $name')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, name.hashCode));
+  int get hashCode => $mrjf($mrjc(id.hashCode, $mrjc(ownedBy.hashCode, name.hashCode)));
   @override
   bool operator ==(other) =>
       identical(this, other) ||
-      (other is TagDataObject &&
-          other.id == this.id &&
-          other.name == this.name);
+      (other is TagDataObject && other.id == this.id && other.ownedBy == this.ownedBy && other.name == this.name);
 }
 
 class TagsCompanion extends UpdateCompanion<TagDataObject> {
   final Value<String> id;
+  final Value<String> ownedBy;
   final Value<String> name;
   const TagsCompanion({
     this.id = const Value.absent(),
+    this.ownedBy = const Value.absent(),
     this.name = const Value.absent(),
   });
   TagsCompanion.insert({
     @required String id,
+    this.ownedBy = const Value.absent(),
     @required String name,
   })  : id = Value(id),
         name = Value(name);
-  TagsCompanion copyWith({Value<String> id, Value<String> name}) {
+  TagsCompanion copyWith({Value<String> id, Value<String> ownedBy, Value<String> name}) {
     return TagsCompanion(
       id: id ?? this.id,
+      ownedBy: ownedBy ?? this.ownedBy,
       name: name ?? this.name,
     );
   }
@@ -351,6 +332,18 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, TagDataObject> {
     );
   }
 
+  final VerificationMeta _ownedByMeta = const VerificationMeta('ownedBy');
+  GeneratedTextColumn _ownedBy;
+  @override
+  GeneratedTextColumn get ownedBy => _ownedBy ??= _constructOwnedBy();
+  GeneratedTextColumn _constructOwnedBy() {
+    return GeneratedTextColumn(
+      'owned_by',
+      $tableName,
+      true,
+    );
+  }
+
   final VerificationMeta _nameMeta = const VerificationMeta('name');
   GeneratedTextColumn _name;
   @override
@@ -364,7 +357,7 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, TagDataObject> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, name];
+  List<GeneratedColumn> get $columns => [id, ownedBy, name];
   @override
   $TagsTable get asDslTable => this;
   @override
@@ -372,17 +365,20 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, TagDataObject> {
   @override
   final String actualTableName = 'tags';
   @override
-  VerificationContext validateIntegrity(TagsCompanion d,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(TagsCompanion d, {bool isInserting = false}) {
     final context = VerificationContext();
     if (d.id.present) {
       context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
     } else if (id.isRequired && isInserting) {
       context.missing(_idMeta);
     }
+    if (d.ownedBy.present) {
+      context.handle(_ownedByMeta, ownedBy.isAcceptableValue(d.ownedBy.value, _ownedByMeta));
+    } else if (ownedBy.isRequired && isInserting) {
+      context.missing(_ownedByMeta);
+    }
     if (d.name.present) {
-      context.handle(
-          _nameMeta, name.isAcceptableValue(d.name.value, _nameMeta));
+      context.handle(_nameMeta, name.isAcceptableValue(d.name.value, _nameMeta));
     } else if (name.isRequired && isInserting) {
       context.missing(_nameMeta);
     }
@@ -403,6 +399,9 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, TagDataObject> {
     if (d.id.present) {
       map['id'] = Variable<String, StringType>(d.id.value);
     }
+    if (d.ownedBy.present) {
+      map['owned_by'] = Variable<String, StringType>(d.ownedBy.value);
+    }
     if (d.name.present) {
       map['name'] = Variable<String, StringType>(d.name.value);
     }
@@ -417,43 +416,37 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, TagDataObject> {
 
 class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
   final String id;
+  final String ownedBy;
   final String title;
   final String content;
   final String categoryId;
-  NoteDataObject(
-      {@required this.id,
-      @required this.title,
-      @required this.content,
-      this.categoryId});
-  factory NoteDataObject.fromData(
-      Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+  NoteDataObject({@required this.id, this.ownedBy, @required this.title, @required this.content, this.categoryId});
+  factory NoteDataObject.fromData(Map<String, dynamic> data, GeneratedDatabase db, {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     return NoteDataObject(
       id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      title:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
-      content:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}content']),
-      categoryId: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}category_id']),
+      ownedBy: stringType.mapFromDatabaseResponse(data['${effectivePrefix}owned_by']),
+      title: stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
+      content: stringType.mapFromDatabaseResponse(data['${effectivePrefix}content']),
+      categoryId: stringType.mapFromDatabaseResponse(data['${effectivePrefix}category_id']),
     );
   }
   factory NoteDataObject.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer = const ValueSerializer.defaults()}) {
     return NoteDataObject(
       id: serializer.fromJson<String>(json['id']),
+      ownedBy: serializer.fromJson<String>(json['ownedBy']),
       title: serializer.fromJson<String>(json['title']),
       content: serializer.fromJson<String>(json['content']),
       categoryId: serializer.fromJson<String>(json['categoryId']),
     );
   }
   @override
-  Map<String, dynamic> toJson(
-      {ValueSerializer serializer = const ValueSerializer.defaults()}) {
+  Map<String, dynamic> toJson({ValueSerializer serializer = const ValueSerializer.defaults()}) {
     return {
       'id': serializer.toJson<String>(id),
+      'ownedBy': serializer.toJson<String>(ownedBy),
       'title': serializer.toJson<String>(title),
       'content': serializer.toJson<String>(content),
       'categoryId': serializer.toJson<String>(categoryId),
@@ -464,21 +457,17 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
   NotesCompanion createCompanion(bool nullToAbsent) {
     return NotesCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      title:
-          title == null && nullToAbsent ? const Value.absent() : Value(title),
-      content: content == null && nullToAbsent
-          ? const Value.absent()
-          : Value(content),
-      categoryId: categoryId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(categoryId),
+      ownedBy: ownedBy == null && nullToAbsent ? const Value.absent() : Value(ownedBy),
+      title: title == null && nullToAbsent ? const Value.absent() : Value(title),
+      content: content == null && nullToAbsent ? const Value.absent() : Value(content),
+      categoryId: categoryId == null && nullToAbsent ? const Value.absent() : Value(categoryId),
     );
   }
 
-  NoteDataObject copyWith(
-          {String id, String title, String content, String categoryId}) =>
+  NoteDataObject copyWith({String id, String ownedBy, String title, String content, String categoryId}) =>
       NoteDataObject(
         id: id ?? this.id,
+        ownedBy: ownedBy ?? this.ownedBy,
         title: title ?? this.title,
         content: content ?? this.content,
         categoryId: categoryId ?? this.categoryId,
@@ -487,6 +476,7 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
   String toString() {
     return (StringBuffer('NoteDataObject(')
           ..write('id: $id, ')
+          ..write('ownedBy: $ownedBy, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('categoryId: $categoryId')
@@ -495,13 +485,14 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(title.hashCode, $mrjc(content.hashCode, categoryId.hashCode))));
+  int get hashCode => $mrjf(
+      $mrjc(id.hashCode, $mrjc(ownedBy.hashCode, $mrjc(title.hashCode, $mrjc(content.hashCode, categoryId.hashCode)))));
   @override
   bool operator ==(other) =>
       identical(this, other) ||
       (other is NoteDataObject &&
           other.id == this.id &&
+          other.ownedBy == this.ownedBy &&
           other.title == this.title &&
           other.content == this.content &&
           other.categoryId == this.categoryId);
@@ -509,17 +500,20 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
 
 class NotesCompanion extends UpdateCompanion<NoteDataObject> {
   final Value<String> id;
+  final Value<String> ownedBy;
   final Value<String> title;
   final Value<String> content;
   final Value<String> categoryId;
   const NotesCompanion({
     this.id = const Value.absent(),
+    this.ownedBy = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
     this.categoryId = const Value.absent(),
   });
   NotesCompanion.insert({
     @required String id,
+    this.ownedBy = const Value.absent(),
     @required String title,
     @required String content,
     this.categoryId = const Value.absent(),
@@ -527,12 +521,10 @@ class NotesCompanion extends UpdateCompanion<NoteDataObject> {
         title = Value(title),
         content = Value(content);
   NotesCompanion copyWith(
-      {Value<String> id,
-      Value<String> title,
-      Value<String> content,
-      Value<String> categoryId}) {
+      {Value<String> id, Value<String> ownedBy, Value<String> title, Value<String> content, Value<String> categoryId}) {
     return NotesCompanion(
       id: id ?? this.id,
+      ownedBy: ownedBy ?? this.ownedBy,
       title: title ?? this.title,
       content: content ?? this.content,
       categoryId: categoryId ?? this.categoryId,
@@ -553,6 +545,18 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
       'id',
       $tableName,
       false,
+    );
+  }
+
+  final VerificationMeta _ownedByMeta = const VerificationMeta('ownedBy');
+  GeneratedTextColumn _ownedBy;
+  @override
+  GeneratedTextColumn get ownedBy => _ownedBy ??= _constructOwnedBy();
+  GeneratedTextColumn _constructOwnedBy() {
+    return GeneratedTextColumn(
+      'owned_by',
+      $tableName,
+      true,
     );
   }
 
@@ -593,7 +597,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, title, content, categoryId];
+  List<GeneratedColumn> get $columns => [id, ownedBy, title, content, categoryId];
   @override
   $NotesTable get asDslTable => this;
   @override
@@ -601,29 +605,30 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
   @override
   final String actualTableName = 'notes';
   @override
-  VerificationContext validateIntegrity(NotesCompanion d,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(NotesCompanion d, {bool isInserting = false}) {
     final context = VerificationContext();
     if (d.id.present) {
       context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
     } else if (id.isRequired && isInserting) {
       context.missing(_idMeta);
     }
+    if (d.ownedBy.present) {
+      context.handle(_ownedByMeta, ownedBy.isAcceptableValue(d.ownedBy.value, _ownedByMeta));
+    } else if (ownedBy.isRequired && isInserting) {
+      context.missing(_ownedByMeta);
+    }
     if (d.title.present) {
-      context.handle(
-          _titleMeta, title.isAcceptableValue(d.title.value, _titleMeta));
+      context.handle(_titleMeta, title.isAcceptableValue(d.title.value, _titleMeta));
     } else if (title.isRequired && isInserting) {
       context.missing(_titleMeta);
     }
     if (d.content.present) {
-      context.handle(_contentMeta,
-          content.isAcceptableValue(d.content.value, _contentMeta));
+      context.handle(_contentMeta, content.isAcceptableValue(d.content.value, _contentMeta));
     } else if (content.isRequired && isInserting) {
       context.missing(_contentMeta);
     }
     if (d.categoryId.present) {
-      context.handle(_categoryIdMeta,
-          categoryId.isAcceptableValue(d.categoryId.value, _categoryIdMeta));
+      context.handle(_categoryIdMeta, categoryId.isAcceptableValue(d.categoryId.value, _categoryIdMeta));
     } else if (categoryId.isRequired && isInserting) {
       context.missing(_categoryIdMeta);
     }
@@ -643,6 +648,9 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
     final map = <String, Variable>{};
     if (d.id.present) {
       map['id'] = Variable<String, StringType>(d.id.value);
+    }
+    if (d.ownedBy.present) {
+      map['owned_by'] = Variable<String, StringType>(d.ownedBy.value);
     }
     if (d.title.present) {
       map['title'] = Variable<String, StringType>(d.title.value);

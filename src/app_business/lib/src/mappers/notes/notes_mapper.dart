@@ -11,6 +11,7 @@ class NotesMapperImpl implements NotesMapper {
         title: source.title,
         content: source.content,
         categoryId: source.tagId,
+        ownedBy: source.ownedBy,
       );
 
   @override
@@ -19,5 +20,6 @@ class NotesMapperImpl implements NotesMapper {
         title: source.title,
         content: source.content,
         tagId: source.categoryId,
+        ownedBy: source.ownedBy
       );
 }
