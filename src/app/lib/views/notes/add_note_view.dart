@@ -52,6 +52,10 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
   }
 
   Widget _buildScaffold(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final isDark = brightness == Brightness.dark;
+    final effectiveColor = isDark ? Colors.white60 : Colors.grey[500];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -79,8 +83,16 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
           child: ExtendedColumn(
+            crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 12.0,
             children: <Widget>[
+              OutlineButton(
+                textColor: effectiveColor,
+                color: effectiveColor,
+                borderSide: BorderSide(color: effectiveColor),
+                child: Text(viewModel.assignedTag?.name ?? 'Untagged'),
+                onPressed: viewModel.onSelectTag,
+              ),
               TextField(
                 controller: _titleController,
                 style: Theme.of(context).textTheme.title,
