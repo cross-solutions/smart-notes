@@ -93,6 +93,10 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> onAddNote() => _navigationService.pushModal(ViewNames.addNoteView);
 
+  void onEditTags() async {
+    await _navigationService.push(ViewNames.editTagsView);
+  }
+
   void onToggleEditingMode() {
     switch (editingMode) {
       case ListEditingMode.none:
@@ -139,16 +143,22 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  void _onNotesChanged(List<NoteEntity> newNotes) {
-    notes = newNotes.map((n) {
+  void _onNotesChanged(List<NoteEntity> newNotes) async {
+    final futureList = newNotes.map((n) async {
+      TagEntity tag;
+
+      if (n.tagId != null) tag = await _tagsManager.getTag(n.tagId);
+
       return NoteItemModel(
         id: n.id,
         tagId: n.tagId,
         title: n.title,
         content: n.content,
+        tag: tag,
       );
     }).toList();
 
+    notes = await Future.wait(futureList);
     selectedNotesCount = notes.where((n) => n.isSelected).length;
   }
 

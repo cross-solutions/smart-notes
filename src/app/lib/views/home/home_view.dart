@@ -219,7 +219,7 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
                 ),
               ],
             ),
-            onPressed: () {},
+            onPressed: viewModel.onEditTags,
           )
         ],
       ),
