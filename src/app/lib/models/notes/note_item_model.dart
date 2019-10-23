@@ -1,9 +1,11 @@
 import 'package:app/models/listenable_model.dart';
+import 'package:app_business/entities.dart';
 
 class NoteItemModel extends ListenableModel {
   NoteItemModel({
     this.id,
     this.tagId,
+    this.tag,
     String title,
     String content,
     bool isSelected,
@@ -12,6 +14,8 @@ class NoteItemModel extends ListenableModel {
     this.content = content;
     this.isSelected = false;
   }
+
+  final TagEntity tag;
 
   String id;
   String tagId;

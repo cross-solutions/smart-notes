@@ -1,8 +1,10 @@
 import 'package:app/models/notes/note_item_model.dart';
 import 'package:app/services/services.dart';
+import 'package:app/view_models/tags/edit_tags_view_model.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
+import 'package:app_common/constants.dart';
 import 'package:uuid/uuid.dart';
 
 class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
@@ -32,17 +34,28 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
 
   List<TagEntity> tags;
   NoteItemModel note;
-
   bool isEditing;
+
+  TagEntity _assignedTag;
+  TagEntity get assignedTag => _assignedTag;
+  set assignedTag(TagEntity value) {
+    if (_assignedTag == value) {
+      _assignedTag = value;
+      return;
+    }
+    _assignedTag = value;
+    notifyListeners('assignedTag');
+  }
 
   void onTextRecognized(void Function(String text) callback) => _onTextRecognized = callback;
 
   Future<void> onSaveNote() async {
     await _notesManager.addNote(NoteEntity(
       id: Uuid().v1(),
-      title: note.title ?? 'Note from ${DateTime.now().toString()}',
+      title: note.title ?? 'No title',
       content: note.content,
       ownedBy: _accountManager.currentAccount.id,
+      tagId: assignedTag?.id,
     ));
 
     _navigationService.pop();
@@ -51,12 +64,19 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
   Future<void> onSaveEditedNote() async {
     await _notesManager.updateNote(NoteEntity(
       id: note.id,
-      title: note.title ?? 'Note from ${DateTime.now().toString()}',
+      title: note.title ?? 'No title',
       content: note.content,
       ownedBy: _accountManager.currentAccount.id,
+      tagId: assignedTag?.id,
     ));
 
     _navigationService.pop();
+  }
+
+  Future<void> onSelectTag() async {
+    final chosenTag = await _navigationService.push(ViewNames.editTagsView, parameter: TagTransactionType.choose);
+
+    if (chosenTag != null) assignedTag = chosenTag;
   }
 
   Future<void> onStartTextRecognitionFromCamera() async {
@@ -83,6 +103,7 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
     if (parameter != null) {
       note = parameter;
       isEditing = true;
+      assignedTag = parameter.tag;
     }
   }
 }

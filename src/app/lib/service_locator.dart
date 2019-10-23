@@ -1,5 +1,7 @@
+import 'package:app/view_models/tags/edit_tags_view_model.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app/services/services.dart';
+import 'package:app/views/tags/edit_tags_view.dart';
 import 'package:app/views/views.dart';
 import 'package:app_common/constants.dart';
 import 'package:app_util/app_util.dart';
@@ -28,6 +30,7 @@ class ServiceLocator {
       ..registerFactory<Widget>(() => AddOrEditNoteView(i.get<AddOrEditNoteViewModel>()),
           instanceName: ViewNames.addNoteView)
       ..registerFactory<Widget>(() => SettingsView(i.get<SettingsViewModel>()), instanceName: ViewNames.settingsView)
+      ..registerFactory<Widget>(() => EditTagsView(i.get<EditTagsViewModel>()), instanceName: ViewNames.editTagsView)
 
       // Register View Models
       ..registerLazySingleton<AppViewModel>(() => AppViewModel(
@@ -62,6 +65,11 @@ class ServiceLocator {
             i.get<SettingsManager>(),
             i.get<NavigationService>(),
             i.get<DialogService>(),
+          ))
+      ..registerFactory<EditTagsViewModel>(() => EditTagsViewModel(
+            i.get<TagsManager>(),
+            i.get<AccountManager>(),
+            i.get<NavigationService>(),
           ))
 
       // Register Services
