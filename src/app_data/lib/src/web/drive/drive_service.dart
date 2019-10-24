@@ -13,7 +13,7 @@ import 'package:googleapis/drive/v3.dart';
 abstract class DriveService {
   Future<File> getSavedNotesFromCloud();
 
-  Future<void> backupNotesToCloud();
+  Future<void> backupNotesToCloud(String ownedBy);
 
   Future<void> restoreNotesFromCloud();
 }
@@ -58,13 +58,13 @@ class DriveServiceImpl implements DriveService {
   }
 
   @override
-  Future<void> backupNotesToCloud() async {
+  Future<void> backupNotesToCloud(String ownedBy) async {
     final client = await createClient();
 
     try {
       final driveApi = DriveApi(client);
-      final notes = await _notesRepository.selectAll(); //TODO: Get only user's tags and notes.
-      final tags = await _tagsRepository.selectAll();
+      final notes = await _notesRepository.selectAllOwnedNotes(ownedBy);
+      final tags = await _tagsRepository.selectAllTagsNotes(ownedBy);
       final backupDto = BackupDto(notes: notes, tags: tags);
       final backupDataJson = backupDto.toJson();
       final backupDataJsonString = jsonEncode(backupDataJson);

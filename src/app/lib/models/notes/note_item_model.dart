@@ -4,8 +4,8 @@ import 'package:app_business/entities.dart';
 class NoteItemModel extends ListenableModel {
   NoteItemModel({
     this.id,
-    this.tagId,
     this.tag,
+    this.created,
     String title,
     String content,
     bool isSelected,
@@ -15,10 +15,9 @@ class NoteItemModel extends ListenableModel {
     this.isSelected = false;
   }
 
+  final String id;
+  final DateTime created;
   final TagEntity tag;
-
-  String id;
-  String tagId;
 
   String _title;
   String get title => _title;

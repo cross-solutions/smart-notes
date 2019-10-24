@@ -43,9 +43,8 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
               tag: viewModel.note.id,
               child: _buildScaffold(context),
             );
-          } else {
+          } else
             return _buildScaffold(context);
-          }
         },
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:app/models/models.dart';
 import 'package:app/models/notes/note_item_model.dart';
 import 'package:app/services/services.dart';
 import 'package:app/view_models/tags/edit_tags_view_model.dart';
@@ -15,6 +16,7 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
     this._cameraService,
     this._mlVisionService,
     this._navigationService,
+    this._dialogService,
   ) {
     _tagsManager.tags.then((tags) {
       this.tags = tags;
@@ -29,6 +31,7 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
   final CameraService _cameraService;
   final MLVisionService _mlVisionService;
   final NavigationService _navigationService;
+  final DialogService _dialogService;
 
   void Function(String text) _onTextRecognized;
 
@@ -55,7 +58,8 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
       title: note.title ?? 'No title',
       content: note.content,
       ownedBy: _accountManager.currentAccount.id,
-      tagId: assignedTag?.id,
+      tag: assignedTag,
+      created: DateTime.now(),
     ));
 
     _navigationService.pop();
@@ -67,16 +71,27 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
       title: note.title ?? 'No title',
       content: note.content,
       ownedBy: _accountManager.currentAccount.id,
-      tagId: assignedTag?.id,
+      tag: assignedTag,
+      created: note.created,
     ));
 
     _navigationService.pop();
   }
 
   Future<void> onSelectTag() async {
-    final chosenTag = await _navigationService.push(ViewNames.editTagsView, parameter: TagTransactionType.choose);
+    TagItemModel chosenTag = await _navigationService.push(
+      ViewNames.editTagsView,
+      parameter: TagTransactionType.choose,
+    );
 
-    if (chosenTag != null) assignedTag = chosenTag;
+    if (chosenTag != null) {
+      assignedTag = TagEntity(
+        id: chosenTag.id,
+        name: chosenTag.name,
+        created: chosenTag.created,
+      );
+    } else
+      assignedTag = assignedTag != null ? assignedTag : null;
   }
 
   Future<void> onStartTextRecognitionFromCamera() async {
@@ -94,8 +109,12 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
   }
 
   Future<void> deleteNoteToEdit() async {
-    await _notesManager.deleteNote(NoteEntity(id: note.id));
-    _navigationService.pop();
+    final shouldDelete = await _dialogService.confirm('This cannot be undone.', title: 'Delete note?', ok: 'Delete');
+
+    if (shouldDelete) {
+      await _notesManager.deleteNote(NoteEntity(id: note.id));
+      _navigationService.pop();
+    }
   }
 
   @override

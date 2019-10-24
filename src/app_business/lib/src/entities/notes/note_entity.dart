@@ -1,3 +1,4 @@
+import 'package:app_business/entities.dart';
 import 'package:app_business/src/entities/base/base_entity.dart';
 
 class NoteEntity extends BaseEntity {
@@ -6,12 +7,14 @@ class NoteEntity extends BaseEntity {
     this.ownedBy,
     this.title,
     this.content,
-    this.tagId,
+    this.created,
+    this.tag,
   });
 
   final String id;
   final String ownedBy;
   final String title;
   final String content;
-  final String tagId;
+  final DateTime created;
+  final TagEntity tag;
 }

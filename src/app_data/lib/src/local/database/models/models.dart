@@ -1,5 +1,7 @@
 import 'package:moor_flutter/moor_flutter.dart';
 
+export 'join_query_results.dart';
+
 part 'models.g.dart';
 
 // Run `flutter packages pub run build_runner build --delete-conflicting-outputs` in `app_data`
@@ -36,6 +38,8 @@ class Tags extends Table {
   TextColumn get ownedBy => text().nullable()();
 
   TextColumn get name => text()();
+
+  DateTimeColumn get created => dateTime()();
 }
 
 @DataClassName('NoteDataObject')
@@ -52,4 +56,6 @@ class Notes extends Table {
   TextColumn get content => text()();
 
   TextColumn get categoryId => text().nullable()();
+
+  DateTimeColumn get created => dateTime()();
 }

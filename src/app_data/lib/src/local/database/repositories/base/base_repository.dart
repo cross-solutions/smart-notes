@@ -23,5 +23,5 @@ abstract class BaseRepository<TTable extends Table, TDataObject extends DataClas
   Future<void> updateItem(TDataObject dataObject) => update(table).replace(dataObject as Insertable);
 
   @protected
-  TableInfo<TTable, TDataObject> get table => db.allTables.firstWhere((t) => t is TableInfo<TTable, TDataObject>);
+  TableInfo<TTable, TDataObject> get table;
 }

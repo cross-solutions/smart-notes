@@ -42,6 +42,7 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
 
   Widget _buildAppBar(bool isDeleting) {
     return PreferredSize(
+      preferredSize: Size(double.infinity, 96),
       child: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(16.0),
@@ -143,7 +144,6 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
           ),
         ),
       ),
-      preferredSize: Size(double.infinity, 120),
     );
   }
 
@@ -238,7 +238,11 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            TagSelectorWidget(items: viewModel.tags),
+            TagSelectorWidget(
+              items: viewModel.tags,
+              selectedItem: viewModel.selectedTag,
+              onSelectedChanged: viewModel.onToggleTagSelection,
+            ),
           ],
         ),
       ),

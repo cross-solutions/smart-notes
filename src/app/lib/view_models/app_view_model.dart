@@ -14,14 +14,16 @@ class AppViewModel extends BaseViewModel {
     this._navigationService,
   ) {
     settings = SettingsEntity();
-
     _onInitialize();
   }
 
-  final AuthManager _authManager;
-  final SettingsManager _settingsManager;
   final AnalyticsService _analyticsService;
+  final AuthManager _authManager;
   final NavigationService _navigationService;
+  final SettingsManager _settingsManager;
+
+  @override
+  void dispose() => _settingsManager.removeListener(_onSettingsChanged);
 
   SettingsEntity _settings;
   SettingsEntity get settings => _settings;
@@ -35,13 +37,13 @@ class AppViewModel extends BaseViewModel {
   }
 
   Future<void> _onInitialize() async {
-    try {
-      _settingsManager.onSettingsChanged(() async => settings = await _settingsManager.currentSettings);
+    _settingsManager.addListener(_onSettingsChanged);
 
+    try {
       await Future.wait([
         _analyticsService.start(),
         _authManager.ensureUserSignedIn(),
-        _settingsManager.currentSettings.then((settings) => this.settings = settings),
+        _settingsManager.initialize(),
         Future.delayed(Duration(seconds: 1)),
       ]);
 
@@ -51,4 +53,6 @@ class AppViewModel extends BaseViewModel {
       await _navigationService.pushReplacement(ViewNames.loginView);
     }
   }
+
+  void _onSettingsChanged() => settings = _settingsManager.currentSettings;
 }

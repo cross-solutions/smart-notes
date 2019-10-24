@@ -9,20 +9,22 @@ import 'package:app_util/app_util.dart';
 class SettingsViewModel extends BaseViewModel {
   SettingsViewModel(
     this._authManager,
+    this._accountManager,
     this._settingsManager,
     this._navigationService,
     this._dialogService,
   ) {
+    isDarkMode = _settingsManager.currentSettings.themeConfig == ThemeConfig.dark;
+    _settingsManager.addListener(_onSettingsChanged);
     isBackuping = false;
     isRestoring = false;
-
-    _updateValues();
   }
 
+  final AccountManager _accountManager;
   final AuthManager _authManager;
-  final SettingsManager _settingsManager;
   final DialogService _dialogService;
   final NavigationService _navigationService;
+  final SettingsManager _settingsManager;
 
   bool _isDarkMode;
   bool get isDarkMode => _isDarkMode;
@@ -57,11 +59,14 @@ class SettingsViewModel extends BaseViewModel {
     notifyListeners('isRestoring');
   }
 
+  @override
+  void dispose() => _settingsManager.removeListener(_onSettingsChanged);
+
   Future<void> onBackupNotes() async {
     if (isBackuping || isRestoring) return;
     try {
       isBackuping = true;
-      await _settingsManager.backupNotesToCloud();
+      await _settingsManager.backupNotesToCloud(_accountManager.currentAccount.id);
     } on AuthException {
       debugInfo('Sign in required');
       _dialogService.alert('Please relogin and try to backup again.', title: 'Session expired');
@@ -105,13 +110,10 @@ class SettingsViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> onUpdateTheme(bool isDarkMode) async {
-    await _settingsManager.updateTheme(isDarkMode ? ThemeConfig.dark : ThemeConfig.light);
-    await _updateValues();
+  Future<void> onUpdateTheme(bool isDarkMode) {
+    final newTheme = isDarkMode ? ThemeConfig.dark : ThemeConfig.light;
+    return _settingsManager.updateTheme(newTheme);
   }
 
-  Future<void> _updateValues() async {
-    final newSettings = await _settingsManager.currentSettings;
-    isDarkMode = newSettings.themeConfig == ThemeConfig.dark;
-  }
+  void _onSettingsChanged() => isDarkMode = _settingsManager.currentSettings.themeConfig == ThemeConfig.dark;
 }
