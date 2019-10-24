@@ -11,7 +11,7 @@ class BackupDto {
 
   factory BackupDto.fromJson(Map<String, dynamic> json) => BackupDto(
         notes: List<NoteDataObject>.from(json['notes'].map((x) => NoteDataObject.fromJson(x))),
-        tags: List<TagDataObject>.from(json['tags'].map((x) => x)),
+        tags: List<TagDataObject>.from(json['tags'].map((x) => TagDataObject.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
