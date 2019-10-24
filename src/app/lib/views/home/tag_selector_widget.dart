@@ -5,9 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class TagSelectorWidget extends StatelessWidget {
-  TagSelectorWidget({Key key, @required this.items}) : super(key: key);
+  TagSelectorWidget({
+    Key key,
+    @required this.items,
+    @required this.selectedItem,
+    @required this.onSelectedChanged,
+  }) : super(key: key);
 
   final List<TagItemModel> items;
+  final TagItemModel selectedItem;
+  final void Function(TagItemModel tag) onSelectedChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +32,10 @@ class TagSelectorWidget extends StatelessWidget {
                     t.name,
                     style: TextStyle().copyWith(color: Colors.black87, fontWeight: FontWeight.w600),
                   ),
-                  isSelected: model.isSelected,
-                  onSelectedChanged: (isSelected) => model.isSelected = isSelected,
+                  isSelected: selectedItem == model,
+                  onSelectedChanged: (_) {
+                    onSelectedChanged(model);
+                  },
                 );
               },
             ),

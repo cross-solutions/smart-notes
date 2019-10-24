@@ -10,11 +10,9 @@ import 'package:app_common/constants.dart';
 class HomeViewModel extends BaseViewModel {
   HomeViewModel(
     AccountManager accountManager,
-    this._authManager,
     this._tagsManager,
     this._notesManager,
     this._navigationService,
-    this._dialogService,
   ) {
     currentAccount = accountManager.currentAccount;
     tags = [];
@@ -26,15 +24,14 @@ class HomeViewModel extends BaseViewModel {
     _notesStreamSubscription = _notesManager.getNotesStream(currentAccount.id).listen(_onNotesChanged);
   }
 
-  AccountEntity currentAccount;
-
-  final AuthManager _authManager;
   final TagsManager _tagsManager;
   final NotesManager _notesManager;
   final NavigationService _navigationService;
-  final DialogService _dialogService;
+
   StreamSubscription _tagsStreamSubscription;
   StreamSubscription _notesStreamSubscription;
+
+  AccountEntity currentAccount;
 
   List<TagItemModel> _tags;
   List<TagItemModel> get tags => _tags;
@@ -45,6 +42,18 @@ class HomeViewModel extends BaseViewModel {
     }
     _tags = value;
     notifyListeners('tags');
+  }
+
+  TagItemModel _selectedTag;
+  TagItemModel get selectedTag => _selectedTag;
+  set selectedTag(TagItemModel value) {
+    if (_selectedTag == value) {
+      _selectedTag = value;
+      return;
+    }
+    _selectedTag = value;
+    _onFilterTags(_selectedTag);
+    notifyListeners('selectedTag');
   }
 
   ListEditingMode _editingMode;
@@ -84,18 +93,13 @@ class HomeViewModel extends BaseViewModel {
   void dispose() {
     _tagsStreamSubscription.cancel();
     _notesStreamSubscription.cancel();
-    super.dispose();
   }
 
-  Future<void> onShowSettings() async {
-    await _navigationService.push(ViewNames.settingsView);
-  }
+  Future<void> onShowSettings() => _navigationService.push(ViewNames.settingsView);
 
   Future<void> onAddNote() => _navigationService.pushModal(ViewNames.addNoteView);
 
-  void onEditTags() async {
-    await _navigationService.push(ViewNames.editTagsView);
-  }
+  void onEditTags() => _navigationService.push(ViewNames.editTagsView);
 
   void onToggleEditingMode() {
     switch (editingMode) {
@@ -126,6 +130,16 @@ class HomeViewModel extends BaseViewModel {
     selectedNotesCount = notes.where((n) => n.isSelected).length;
   }
 
+  void onToggleTagSelection(TagItemModel tag) {
+    if (tag == selectedTag) {
+      selectedTag = null;
+    } else {
+      tag.isSelected = true;
+      selectedTag?.isSelected = false;
+      selectedTag = tag;
+    }
+  }
+
   Future<void> onViewNote(NoteItemModel note) => _navigationService.pushModal(ViewNames.addNoteView, parameter: note);
 
   void Function() get onDeleteSelectedNotes {
@@ -143,29 +157,39 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  void _onNotesChanged(List<NoteEntity> newNotes) async {
-    final futureList = newNotes.map((n) async {
-      TagEntity tag;
+  void _onFilterTags(TagItemModel tag) {
+    if (tag != null) {
+      _notesStreamSubscription.cancel();
+      _notesStreamSubscription = _notesManager.getNotesWithTagStream(currentAccount.id, tag.id).listen(_onNotesChanged);
+    } else {
+      _notesStreamSubscription.cancel();
+      _notesStreamSubscription = _notesManager.getNotesStream(currentAccount.id).listen(_onNotesChanged);
+    }
+  }
 
-      if (n.tagId != null) tag = await _tagsManager.getTag(n.tagId);
-
+  void _onNotesChanged(List<NoteEntity> newNotes) {
+    notes = newNotes.map((n) {
       return NoteItemModel(
         id: n.id,
-        tagId: n.tagId,
         title: n.title,
         content: n.content,
-        tag: tag,
+        created: n.created,
+        tag: n.tag,
       );
     }).toList();
 
-    notes = await Future.wait(futureList);
     selectedNotesCount = notes.where((n) => n.isSelected).length;
   }
 
   void _onTagsChanged(List<TagEntity> newTags) {
-    final selectedTagModels = tags.where((t) => t.isSelected).toList();
-    final newTagModels = newTags.map((t) => TagItemModel(t.id, t.name)).toList();
-    selectedTagModels.forEach((t1) => newTagModels.firstWhere((t2) => t2.id == t1.id)..isSelected = true);
+    final newTagModels = newTags.map((t) => TagItemModel(t.id, t.name, t.created)).toList();
+    final selectedTagExists = newTagModels.contains((t) => t.id == selectedTag?.id);
+
+    if (selectedTagExists) {
+      newTagModels.firstWhere((t) => t.id == selectedTag.id).isSelected = true;
+    } else
+      selectedTag = null;
+
     tags = newTagModels;
   }
 }

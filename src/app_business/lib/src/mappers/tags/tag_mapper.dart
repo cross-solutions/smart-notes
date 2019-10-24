@@ -6,16 +6,22 @@ abstract class TagMapper extends EntityDataObjectMapper<TagEntity, TagDataObject
 
 class TagMapperImpl implements TagMapper {
   @override
-  TagDataObject toDataObject(TagEntity source) => TagDataObject(
-        id: source.id,
-        name: source.name,
-        ownedBy: source.ownedBy,
-      );
+  TagDataObject toDataObject(TagEntity source) {
+    return TagDataObject(
+      id: source.id,
+      name: source.name,
+      ownedBy: source.ownedBy,
+      created: source.created,
+    );
+  }
 
   @override
-  TagEntity toEntity(TagDataObject source) => TagEntity(
-        id: source.id,
-        name: source.name,
-        ownedBy: source.ownedBy,
-      );
+  TagEntity toEntity(TagDataObject source) {
+    return TagEntity(
+      id: source.id,
+      name: source.name,
+      ownedBy: source.ownedBy,
+      created: source.created,
+    );
+  }
 }
