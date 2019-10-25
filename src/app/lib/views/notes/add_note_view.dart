@@ -66,7 +66,7 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('Take a note'),
+              Text(viewModel.note.formattedLastModified),
               IconButton(
                 padding: const EdgeInsets.all(0.0),
                 icon: Icon(MdiIcons.textRecognition),

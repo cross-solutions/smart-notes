@@ -13,7 +13,7 @@ class NoteMapperImpl implements NoteMapper {
       title: source.title,
       content: source.content,
       categoryId: source.tag?.id,
-      created: source.created,
+      lastmodified: source.lastModified,
       ownedBy: source.ownedBy,
     );
   }
@@ -24,7 +24,7 @@ class NoteMapperImpl implements NoteMapper {
       id: source.id,
       title: source.title,
       content: source.content,
-      created: source.created,
+      lastModified: source.lastmodified,
       ownedBy: source.ownedBy,
     );
   }
@@ -44,7 +44,7 @@ class NoteWithTagMapperImpl implements NoteWithTagMapper {
       title: source.note.title,
       content: source.note.content,
       ownedBy: source.note.ownedBy,
-      created: source.note.created,
+      lastModified: source.note.lastmodified,
       tag: source.tag != null ? _tagMapper.toEntity(source.tag) : null,
     );
   }

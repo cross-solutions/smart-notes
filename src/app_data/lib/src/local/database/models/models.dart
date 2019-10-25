@@ -57,5 +57,5 @@ class Notes extends Table {
 
   TextColumn get categoryId => text().nullable()();
 
-  DateTimeColumn get created => dateTime()();
+  DateTimeColumn get lastmodified => dateTime()();
 }
