@@ -1,11 +1,12 @@
 import 'package:app/models/listenable_model.dart';
 import 'package:app_business/entities.dart';
+import 'package:intl/intl.dart';
 
 class NoteItemModel extends ListenableModel {
   NoteItemModel({
     this.id,
     this.tag,
-    this.created,
+    this.lastModified,
     String title,
     String content,
     bool isSelected,
@@ -16,7 +17,7 @@ class NoteItemModel extends ListenableModel {
   }
 
   final String id;
-  final DateTime created;
+  final DateTime lastModified;
   final TagEntity tag;
 
   String _title;
@@ -50,5 +51,12 @@ class NoteItemModel extends ListenableModel {
     }
     _isSelected = value;
     notifyListeners('isSelected');
+  }
+
+  String get formattedLastModified {
+    if (lastModified != null)
+      return 'Last modified: ${DateFormat.yMMMMEEEEd().format(lastModified)}';
+    else
+      return '';
   }
 }

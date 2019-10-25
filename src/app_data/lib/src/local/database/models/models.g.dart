@@ -506,14 +506,14 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
   final String title;
   final String content;
   final String categoryId;
-  final DateTime created;
+  final DateTime lastmodified;
   NoteDataObject(
       {@required this.id,
       this.ownedBy,
       @required this.title,
       @required this.content,
       this.categoryId,
-      @required this.created});
+      @required this.lastmodified});
   factory NoteDataObject.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -530,8 +530,8 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}content']),
       categoryId: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}category_id']),
-      created: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}created']),
+      lastmodified: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}lastmodified']),
     );
   }
   factory NoteDataObject.fromJson(Map<String, dynamic> json,
@@ -542,7 +542,7 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
       title: serializer.fromJson<String>(json['title']),
       content: serializer.fromJson<String>(json['content']),
       categoryId: serializer.fromJson<String>(json['categoryId']),
-      created: serializer.fromJson<DateTime>(json['created']),
+      lastmodified: serializer.fromJson<DateTime>(json['lastmodified']),
     );
   }
   @override
@@ -554,7 +554,7 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
       'title': serializer.toJson<String>(title),
       'content': serializer.toJson<String>(content),
       'categoryId': serializer.toJson<String>(categoryId),
-      'created': serializer.toJson<DateTime>(created),
+      'lastmodified': serializer.toJson<DateTime>(lastmodified),
     };
   }
 
@@ -573,9 +573,9 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
       categoryId: categoryId == null && nullToAbsent
           ? const Value.absent()
           : Value(categoryId),
-      created: created == null && nullToAbsent
+      lastmodified: lastmodified == null && nullToAbsent
           ? const Value.absent()
-          : Value(created),
+          : Value(lastmodified),
     );
   }
 
@@ -585,14 +585,14 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           String title,
           String content,
           String categoryId,
-          DateTime created}) =>
+          DateTime lastmodified}) =>
       NoteDataObject(
         id: id ?? this.id,
         ownedBy: ownedBy ?? this.ownedBy,
         title: title ?? this.title,
         content: content ?? this.content,
         categoryId: categoryId ?? this.categoryId,
-        created: created ?? this.created,
+        lastmodified: lastmodified ?? this.lastmodified,
       );
   @override
   String toString() {
@@ -602,7 +602,7 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('categoryId: $categoryId, ')
-          ..write('created: $created')
+          ..write('lastmodified: $lastmodified')
           ..write(')'))
         .toString();
   }
@@ -615,7 +615,7 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           $mrjc(
               title.hashCode,
               $mrjc(content.hashCode,
-                  $mrjc(categoryId.hashCode, created.hashCode))))));
+                  $mrjc(categoryId.hashCode, lastmodified.hashCode))))));
   @override
   bool operator ==(other) =>
       identical(this, other) ||
@@ -625,7 +625,7 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           other.title == this.title &&
           other.content == this.content &&
           other.categoryId == this.categoryId &&
-          other.created == this.created);
+          other.lastmodified == this.lastmodified);
 }
 
 class NotesCompanion extends UpdateCompanion<NoteDataObject> {
@@ -634,14 +634,14 @@ class NotesCompanion extends UpdateCompanion<NoteDataObject> {
   final Value<String> title;
   final Value<String> content;
   final Value<String> categoryId;
-  final Value<DateTime> created;
+  final Value<DateTime> lastmodified;
   const NotesCompanion({
     this.id = const Value.absent(),
     this.ownedBy = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
     this.categoryId = const Value.absent(),
-    this.created = const Value.absent(),
+    this.lastmodified = const Value.absent(),
   });
   NotesCompanion.insert({
     @required String id,
@@ -649,25 +649,25 @@ class NotesCompanion extends UpdateCompanion<NoteDataObject> {
     @required String title,
     @required String content,
     this.categoryId = const Value.absent(),
-    @required DateTime created,
+    @required DateTime lastmodified,
   })  : id = Value(id),
         title = Value(title),
         content = Value(content),
-        created = Value(created);
+        lastmodified = Value(lastmodified);
   NotesCompanion copyWith(
       {Value<String> id,
       Value<String> ownedBy,
       Value<String> title,
       Value<String> content,
       Value<String> categoryId,
-      Value<DateTime> created}) {
+      Value<DateTime> lastmodified}) {
     return NotesCompanion(
       id: id ?? this.id,
       ownedBy: ownedBy ?? this.ownedBy,
       title: title ?? this.title,
       content: content ?? this.content,
       categoryId: categoryId ?? this.categoryId,
-      created: created ?? this.created,
+      lastmodified: lastmodified ?? this.lastmodified,
     );
   }
 }
@@ -736,13 +736,15 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
     );
   }
 
-  final VerificationMeta _createdMeta = const VerificationMeta('created');
-  GeneratedDateTimeColumn _created;
+  final VerificationMeta _lastmodifiedMeta =
+      const VerificationMeta('lastmodified');
+  GeneratedDateTimeColumn _lastmodified;
   @override
-  GeneratedDateTimeColumn get created => _created ??= _constructCreated();
-  GeneratedDateTimeColumn _constructCreated() {
+  GeneratedDateTimeColumn get lastmodified =>
+      _lastmodified ??= _constructLastmodified();
+  GeneratedDateTimeColumn _constructLastmodified() {
     return GeneratedDateTimeColumn(
-      'created',
+      'lastmodified',
       $tableName,
       false,
     );
@@ -750,7 +752,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, ownedBy, title, content, categoryId, created];
+      [id, ownedBy, title, content, categoryId, lastmodified];
   @override
   $NotesTable get asDslTable => this;
   @override
@@ -790,11 +792,13 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
     } else if (categoryId.isRequired && isInserting) {
       context.missing(_categoryIdMeta);
     }
-    if (d.created.present) {
-      context.handle(_createdMeta,
-          created.isAcceptableValue(d.created.value, _createdMeta));
-    } else if (created.isRequired && isInserting) {
-      context.missing(_createdMeta);
+    if (d.lastmodified.present) {
+      context.handle(
+          _lastmodifiedMeta,
+          lastmodified.isAcceptableValue(
+              d.lastmodified.value, _lastmodifiedMeta));
+    } else if (lastmodified.isRequired && isInserting) {
+      context.missing(_lastmodifiedMeta);
     }
     return context;
   }
@@ -825,8 +829,9 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
     if (d.categoryId.present) {
       map['category_id'] = Variable<String, StringType>(d.categoryId.value);
     }
-    if (d.created.present) {
-      map['created'] = Variable<DateTime, DateTimeType>(d.created.value);
+    if (d.lastmodified.present) {
+      map['lastmodified'] =
+          Variable<DateTime, DateTimeType>(d.lastmodified.value);
     }
     return map;
   }

@@ -173,7 +173,7 @@ class HomeViewModel extends BaseViewModel {
         id: n.id,
         title: n.title,
         content: n.content,
-        created: n.created,
+        lastModified: n.lastModified,
         tag: n.tag,
       );
     }).toList();

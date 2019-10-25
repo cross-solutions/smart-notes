@@ -59,7 +59,7 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
       content: note.content,
       ownedBy: _accountManager.currentAccount.id,
       tag: assignedTag,
-      created: DateTime.now(),
+      lastModified: DateTime.now(),
     ));
 
     _navigationService.pop();
@@ -72,7 +72,7 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
       content: note.content,
       ownedBy: _accountManager.currentAccount.id,
       tag: assignedTag,
-      created: note.created,
+      lastModified: DateTime.now(),
     ));
 
     _navigationService.pop();
