@@ -1,15 +1,14 @@
 import 'package:app/models/models.dart';
 import 'package:app/models/notes/note_item_model.dart';
 import 'package:app/services/services.dart';
-import 'package:app/view_models/tags/edit_tags_view_model.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
 import 'package:app_common/constants.dart';
 import 'package:uuid/uuid.dart';
 
-class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
-  AddOrEditNoteViewModel(
+class NoteViewModel extends InitializableViewModel<NoteItemModel> {
+  NoteViewModel(
     this._notesManager,
     this._tagsManager,
     this._accountManager,
@@ -55,11 +54,11 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
   Future<void> onSaveNote() async {
     await _notesManager.addNote(NoteEntity(
       id: Uuid().v1(),
-      title: note.title ?? 'No title',
+      title: note.title?.isEmpty ?? true == true ? 'No title' : note.title,
       content: note.content,
       ownedBy: _accountManager.currentAccount.id,
       tag: assignedTag,
-      lastModified: DateTime.now(),
+      created: DateTime.now(),
     ));
 
     _navigationService.pop();
@@ -68,10 +67,11 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
   Future<void> onSaveEditedNote() async {
     await _notesManager.updateNote(NoteEntity(
       id: note.id,
-      title: note.title ?? 'No title',
+      title: note.title?.isEmpty ?? true == true ? 'No title' : note.title,
       content: note.content,
       ownedBy: _accountManager.currentAccount.id,
       tag: assignedTag,
+      created: note.created,
       lastModified: DateTime.now(),
     ));
 
@@ -79,19 +79,21 @@ class AddOrEditNoteViewModel extends InitializableViewModel<NoteItemModel> {
   }
 
   Future<void> onSelectTag() async {
-    TagItemModel chosenTag = await _navigationService.push(
-      ViewNames.editTagsView,
+    TagTransactionResult result = await _navigationService.push(
+      ViewNames.tagsView,
       parameter: TagTransactionType.choose,
     );
 
-    if (chosenTag != null) {
+    if (result.transactionType == TagTransactionResultType.selectionEmpty)
+      assignedTag = null;
+    else if (result.transactionType == TagTransactionResultType.changed) {
       assignedTag = TagEntity(
-        id: chosenTag.id,
-        name: chosenTag.name,
-        created: chosenTag.created,
+        id: result.tag.id,
+        name: result.tag.name,
+        created: result.tag.created,
+        lastModified: result.tag.lastModified,
       );
-    } else
-      assignedTag = assignedTag != null ? assignedTag : null;
+    }
   }
 
   Future<void> onStartTextRecognitionFromCamera() async {

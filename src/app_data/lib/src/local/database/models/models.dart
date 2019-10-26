@@ -40,6 +40,8 @@ class Tags extends Table {
   TextColumn get name => text()();
 
   DateTimeColumn get created => dateTime()();
+
+  DateTimeColumn get lastModified => dateTime().nullable()();
 }
 
 @DataClassName('NoteDataObject')
@@ -55,7 +57,9 @@ class Notes extends Table {
 
   TextColumn get content => text()();
 
-  TextColumn get categoryId => text().nullable()();
+  TextColumn get tagId => text().nullable()();
 
-  DateTimeColumn get lastmodified => dateTime()();
+  DateTimeColumn get created => dateTime()();
+
+  DateTimeColumn get lastModified => dateTime().nullable()();
 }

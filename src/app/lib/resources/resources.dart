@@ -105,19 +105,13 @@ class AppTheme {
       labelStyle: TextStyle(
         color: Colors.black,
       ),
-      filled: true,
-      border: OutlineInputBorder(
+      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black54)),
+      focusedBorder: UnderlineInputBorder(
         borderSide: BorderSide(
-          color: Colors.black54,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.black87,
           width: 2.0,
+          color: Colors.black87,
         ),
       ),
-      fillColor: Colors.transparent,
     ),
   );
 
@@ -194,9 +188,13 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       alignLabelWithHint: true,
-      filled: true,
-      border: OutlineInputBorder(),
-      fillColor: Colors.transparent,
+      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(
+          width: 2.0,
+          color: Colors.white70,
+        ),
+      ),
     ),
   );
 }

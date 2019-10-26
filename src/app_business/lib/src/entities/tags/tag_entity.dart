@@ -6,10 +6,12 @@ class TagEntity extends BaseEntity {
     this.ownedBy,
     this.name,
     this.created,
+    this.lastModified,
   });
 
   final String id;
   final String ownedBy;
   final String name;
   final DateTime created;
+  final DateTime lastModified;
 }

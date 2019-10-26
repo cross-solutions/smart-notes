@@ -29,11 +29,12 @@ class _AppViewState extends ModelBoundState<AppView, AppViewModel> {
   Widget _buildApp() {
     // Custom delegate that handles localization.
     final i18n = I18n.delegate;
+    final effectiveTheme = viewModel.settings.themeConfig == ThemeConfig.dark ? ThemeMode.dark : ThemeMode.light;
 
     return MaterialApp(
       title: 'eNotes',
       debugShowCheckedModeBanner: false,
-      themeMode: viewModel.settings.themeConfig == ThemeConfig.dark ? ThemeMode.dark : ThemeMode.light,
+      themeMode: effectiveTheme,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       navigatorKey: AppViewKeys.navigator,

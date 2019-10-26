@@ -6,6 +6,7 @@ class NoteItemModel extends ListenableModel {
   NoteItemModel({
     this.id,
     this.tag,
+    this.created,
     this.lastModified,
     String title,
     String content,
@@ -17,6 +18,7 @@ class NoteItemModel extends ListenableModel {
   }
 
   final String id;
+  final DateTime created;
   final DateTime lastModified;
   final TagEntity tag;
 
@@ -53,10 +55,17 @@ class NoteItemModel extends ListenableModel {
     notifyListeners('isSelected');
   }
 
+  String get formattedCreated {
+    if (created != null)
+      return 'Created: ${DateFormat.jm().format(created)} ${DateFormat.yMMMMEEEEd().format(created)}';
+    else
+      return null;
+  }
+
   String get formattedLastModified {
     if (lastModified != null)
-      return 'Last modified: ${DateFormat.yMMMMEEEEd().format(lastModified)}';
+      return 'Last modified: ${DateFormat.jm().format(lastModified)} ${DateFormat.yMMMMEEEEd().format(lastModified)}';
     else
-      return '';
+      return null;
   }
 }

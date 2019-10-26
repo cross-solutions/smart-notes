@@ -72,6 +72,8 @@ class NoteListItem extends StatelessWidget {
                       Text(
                         model.title,
                         style: effectiveStyle.apply(color: effectiveColor),
+                        maxLines: isIndexEven ? 2 : 3,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       Expanded(
                         child: Text(

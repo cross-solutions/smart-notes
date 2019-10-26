@@ -1,7 +1,5 @@
-import 'package:app/view_models/tags/edit_tags_view_model.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app/services/services.dart';
-import 'package:app/views/tags/edit_tags_view.dart';
 import 'package:app/views/views.dart';
 import 'package:app_common/constants.dart';
 import 'package:app_util/app_util.dart';
@@ -27,12 +25,9 @@ class ServiceLocator {
       ..registerLazySingleton<AppView>(() => AppView(i.get<AppViewModel>()))
       ..registerFactory<Widget>(() => LoginView(i.get<LoginViewModel>()), instanceName: ViewNames.loginView)
       ..registerFactory<Widget>(() => HomeView(i.get<HomeViewModel>()), instanceName: ViewNames.homeView)
-      ..registerFactory<Widget>(
-        () => AddOrEditNoteView(i.get<AddOrEditNoteViewModel>()),
-        instanceName: ViewNames.addNoteView,
-      )
+      ..registerFactory<Widget>(() => NoteView(i.get<NoteViewModel>()), instanceName: ViewNames.noteView)
       ..registerFactory<Widget>(() => SettingsView(i.get<SettingsViewModel>()), instanceName: ViewNames.settingsView)
-      ..registerFactory<Widget>(() => EditTagsView(i.get<EditTagsViewModel>()), instanceName: ViewNames.editTagsView)
+      ..registerFactory<Widget>(() => TagsView(i.get<TagsViewModel>()), instanceName: ViewNames.tagsView)
 
       // Register View Models
       ..registerLazySingleton<AppViewModel>(() => AppViewModel(
@@ -52,7 +47,7 @@ class ServiceLocator {
             i.get<NotesManager>(),
             i.get<NavigationService>(),
           ))
-      ..registerFactory<AddOrEditNoteViewModel>(() => AddOrEditNoteViewModel(
+      ..registerFactory<NoteViewModel>(() => NoteViewModel(
             i.get<NotesManager>(),
             i.get<TagsManager>(),
             i.get<AccountManager>(),
@@ -68,7 +63,7 @@ class ServiceLocator {
             i.get<NavigationService>(),
             i.get<DialogService>(),
           ))
-      ..registerFactory<EditTagsViewModel>(() => EditTagsViewModel(
+      ..registerFactory<TagsViewModel>(() => TagsViewModel(
             i.get<TagsManager>(),
             i.get<AccountManager>(),
             i.get<NavigationService>(),

@@ -13,7 +13,7 @@ class NotesRepository extends BaseRepository<Notes, NoteDataObject> {
         ..where((t) => t.ownedBy.equals(ownedBy)))
         .join([leftOuterJoin(
           db.tags, 
-          db.tags.id.equalsExp(db.notes.categoryId),
+          db.tags.id.equalsExp(db.notes.tagId),
         )]);
 
     return query.watch().map((rows) {
@@ -29,10 +29,10 @@ class NotesRepository extends BaseRepository<Notes, NoteDataObject> {
   Stream<List<NoteWithTag>> watchOwnedNotesWithTag(String ownedBy, String tagId) {
     final query = (select(table)
         ..where((t) => t.ownedBy.equals(ownedBy))
-        ..where((t) => t.categoryId.equals(tagId)))
+        ..where((t) => t.tagId.equals(tagId)))
         .join([leftOuterJoin(
           db.tags, 
-          db.tags.id.equalsExp(db.notes.categoryId),
+          db.tags.id.equalsExp(db.notes.tagId),
         )]);
 
     return query.watch().map((rows) {

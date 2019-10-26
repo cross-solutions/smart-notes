@@ -97,9 +97,9 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> onShowSettings() => _navigationService.push(ViewNames.settingsView);
 
-  Future<void> onAddNote() => _navigationService.pushModal(ViewNames.addNoteView);
+  Future<void> onAddNote() => _navigationService.pushModal(ViewNames.noteView);
 
-  void onEditTags() => _navigationService.push(ViewNames.editTagsView);
+  void onEditTags() => _navigationService.push(ViewNames.tagsView);
 
   void onToggleEditingMode() {
     switch (editingMode) {
@@ -140,7 +140,7 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> onViewNote(NoteItemModel note) => _navigationService.pushModal(ViewNames.addNoteView, parameter: note);
+  Future<void> onViewNote(NoteItemModel note) => _navigationService.pushModal(ViewNames.noteView, parameter: note);
 
   void Function() get onDeleteSelectedNotes {
     if (selectedNotesCount == 0)
@@ -155,6 +155,12 @@ class HomeViewModel extends BaseViewModel {
         onToggleEditingMode();
       };
     }
+  }
+
+  Future<bool> onBackPressed() async {
+    final isDeleting = editingMode == ListEditingMode.delete;
+    if (isDeleting) onToggleEditingMode();
+    return !isDeleting;
   }
 
   void _onFilterTags(TagItemModel tag) {
@@ -173,16 +179,24 @@ class HomeViewModel extends BaseViewModel {
         id: n.id,
         title: n.title,
         content: n.content,
+        created: n.created,
         lastModified: n.lastModified,
         tag: n.tag,
       );
-    }).toList();
+    }).toList()
+      ..sort((n1, n2) {
+        if (n2.lastModified == null) {
+          return n2.created.compareTo(n1.lastModified ?? n1.created);
+        } else {
+          return n2.lastModified.compareTo(n1.lastModified ?? n1.created);
+        }
+      });
 
     selectedNotesCount = notes.where((n) => n.isSelected).length;
   }
 
   void _onTagsChanged(List<TagEntity> newTags) {
-    final newTagModels = newTags.map((t) => TagItemModel(t.id, t.name, t.created)).toList();
+    final newTagModels = newTags.map((t) => TagItemModel(t.id, t.name, t.created, t.lastModified)).toList();
     final selectedTagExists = newTagModels.contains((t) => t.id == selectedTag?.id);
 
     if (selectedTagExists) {

@@ -5,8 +5,8 @@ import 'package:app_business/entities.dart';
 import 'package:app_business/managers.dart';
 import 'package:uuid/uuid.dart';
 
-class EditTagsViewModel extends InitializableViewModel<TagTransactionType> {
-  EditTagsViewModel(
+class TagsViewModel extends InitializableViewModel<TagTransactionType> {
+  TagsViewModel(
     this._tagsManager,
     this._accountManager,
     this._navigationService,
@@ -63,13 +63,7 @@ class EditTagsViewModel extends InitializableViewModel<TagTransactionType> {
   void initParameter(TagTransactionType parameter) => _tagTransactionType = parameter ?? TagTransactionType.modify;
 
   void onTagsChanged(List<TagEntity> newTags) {
-    tags = newTags.map((t) {
-      return TagItemModel(
-        t.id,
-        t.name,
-        t.created,
-      );
-    }).toList();
+    tags = newTags.map((t) => TagItemModel(t.id, t.name, t.created, t.lastModified)).toList();
   }
 
   void onToggleSelectAllTags() {
@@ -117,6 +111,8 @@ class EditTagsViewModel extends InitializableViewModel<TagTransactionType> {
   }
 
   Future<void> onAddTag(String name) {
+    if (name.isEmpty) return _dialogService.alert('A tag name is required.', title: 'Cannot add tag');
+
     final tagAlreadyExists = tags.any((t) => t.name == name);
 
     if (tagAlreadyExists) return _dialogService.alert('A tag with that name already exists.', title: 'Cannot add tag');
@@ -132,15 +128,28 @@ class EditTagsViewModel extends InitializableViewModel<TagTransactionType> {
   void onTagTapped(TagItemModel tag) {
     switch (_tagTransactionType) {
       case TagTransactionType.choose:
-        _navigationService.pop(tag);
+        _navigationService.pop(TagTransactionResult(TagTransactionResultType.changed, tag));
         break;
+
       case TagTransactionType.modify:
         break;
     }
   }
-}
 
-enum TagTransactionType {
-  choose,
-  modify,
+  Future<bool> onBackPressed([bool fromBackButton = false]) async {
+    if (editingMode == ListEditingMode.none && _tagTransactionType == TagTransactionType.modify && fromBackButton)
+      _navigationService.pop();
+    else if (editingMode == ListEditingMode.none && _tagTransactionType == TagTransactionType.choose) {
+      if (tags.isEmpty)
+        _navigationService.pop(TagTransactionResult(TagTransactionResultType.selectionEmpty, null));
+      else
+        _navigationService.pop(TagTransactionResult(TagTransactionResultType.selectionNone, null));
+
+      return false;
+    } else if (editingMode == ListEditingMode.delete) {
+      onToggleEditingMode();
+      return false;
+    }
+    return true;
+  }
 }

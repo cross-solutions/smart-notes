@@ -1,22 +1,23 @@
 import 'package:app/models/models.dart';
-import 'package:app/view_models/tags/edit_tags_view_model.dart';
+import 'package:app/view_models/tags/tags_view_model.dart';
 import 'package:app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class EditTagsView extends ModelBoundWidget<EditTagsViewModel> {
-  EditTagsView(EditTagsViewModel viewModel) : super(viewModel);
+class TagsView extends ModelBoundWidget<TagsViewModel> {
+  TagsView(TagsViewModel viewModel) : super(viewModel);
 
   @override
-  _EditTagsViewState createState() => _EditTagsViewState();
+  _TagsViewState createState() => _TagsViewState();
 }
 
-class _EditTagsViewState extends ModelBoundState<EditTagsView, EditTagsViewModel> {
+class _TagsViewState extends ModelBoundState<TagsView, TagsViewModel> {
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<EditTagsViewModel>(
+    return ScopedModel<TagsViewModel>(
       model: viewModel,
-      child: ScopedModelDescendant<EditTagsViewModel>(
+      child: ScopedModelDescendant<TagsViewModel>(
         builder: (context, child, viewModel) {
           final isDeleting = viewModel.editingMode == ListEditingMode.delete;
           List<Widget> listItems = List<Widget>();
@@ -25,29 +26,37 @@ class _EditTagsViewState extends ModelBoundState<EditTagsView, EditTagsViewModel
               model: t,
               child: ScopedModelDescendant<TagItemModel>(
                 builder: (context, _, model) {
-                  return ListTile(
-                    leading: isDeleting
-                        ? Checkbox(
-                            onChanged: (_) => viewModel.onToggleTagSelection(model),
-                            value: model.isSelected,
-                          )
-                        : null,
-                    title: Text(t.name),
-                    contentPadding: isDeleting
-                        ? const EdgeInsets.symmetric(horizontal: 16.0)
-                        : const EdgeInsets.symmetric(horizontal: 32.0),
-                    onTap: () {
-                      if (isDeleting)
-                        viewModel.onToggleTagSelection(model);
-                      else
-                        viewModel.onTagTapped(t);
-                    },
-                    onLongPress: () {
-                      if (!isDeleting) {
-                        viewModel.onToggleEditingMode();
-                        viewModel.onToggleTagSelection(t);
-                      }
-                    },
+                  return AnimationConfiguration.staggeredList(
+                    key: Key(t.id),
+                    position: viewModel.tags.indexOf(t),
+                    duration: const Duration(milliseconds: 250),
+                    child: FadeInAnimation(
+                      delay: Duration(milliseconds: 50),
+                      child: ListTile(
+                        leading: isDeleting
+                            ? Checkbox(
+                                onChanged: (_) => viewModel.onToggleTagSelection(model),
+                                value: model.isSelected,
+                              )
+                            : null,
+                        title: Text(t.name),
+                        contentPadding: isDeleting
+                            ? const EdgeInsets.symmetric(horizontal: 16.0)
+                            : const EdgeInsets.symmetric(horizontal: 32.0),
+                        onTap: () {
+                          if (isDeleting)
+                            viewModel.onToggleTagSelection(model);
+                          else
+                            viewModel.onTagTapped(t);
+                        },
+                        onLongPress: () {
+                          if (!isDeleting) {
+                            viewModel.onToggleEditingMode();
+                            viewModel.onToggleTagSelection(t);
+                          }
+                        },
+                      ),
+                    ),
                   );
                 },
               ),
@@ -70,9 +79,12 @@ class _EditTagsViewState extends ModelBoundState<EditTagsView, EditTagsViewModel
             ),
           ));
 
-          return Scaffold(
-            appBar: _buildAppBar(isDeleting),
-            body: ListView(children: listItems),
+          return WillPopScope(
+            onWillPop: viewModel.onBackPressed,
+            child: Scaffold(
+              appBar: _buildAppBar(isDeleting),
+              body: ListView(children: listItems),
+            ),
           );
         },
       ),
@@ -94,8 +106,8 @@ class _EditTagsViewState extends ModelBoundState<EditTagsView, EditTagsViewModel
               spacing: 16.0,
               children: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: Navigator.of(context).pop,
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => viewModel.onBackPressed(true),
                 ),
                 Text(
                   'Tags',
@@ -155,7 +167,7 @@ class _EditTagsViewState extends ModelBoundState<EditTagsView, EditTagsViewModel
             controller: controller,
             decoration: InputDecoration(
               hintText: 'Tag name',
-              border: UnderlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
             ),
           ),
           actions: <Widget>[
