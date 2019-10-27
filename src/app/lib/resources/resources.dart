@@ -120,6 +120,8 @@ class AppTheme {
   static final darkTheme = ThemeData(
     fontFamily: 'Open Sans',
     brightness: Brightness.dark,
+    scaffoldBackgroundColor: Color(0xFF1c1c1c),
+    cardColor: Colors.grey[850],
     primarySwatch: MaterialColor(
       4294872064,
       {
