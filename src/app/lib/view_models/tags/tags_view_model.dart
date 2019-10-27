@@ -100,12 +100,16 @@ class TagsViewModel extends InitializableViewModel<TagTransactionType> {
       return null;
     else {
       return () async {
-        final tagsToBeDeleted = tags.where((t) => t.isSelected);
-        for (final tag in tagsToBeDeleted) {
-          await _tagsManager.deleteTag(TagEntity(id: tag.id));
-        }
+        final shouldDelete = await _dialogService.confirm('This cannot be undone.', title: 'Delete tag/s?', ok: 'Delete');
 
-        onToggleEditingMode();
+        if (shouldDelete == true) {
+          final tagsToBeDeleted = tags.where((t) => t.isSelected);
+          for (final tag in tagsToBeDeleted) {
+            await _tagsManager.deleteTag(TagEntity(id: tag.id));
+          }
+
+          onToggleEditingMode();
+        }
       };
     }
   }

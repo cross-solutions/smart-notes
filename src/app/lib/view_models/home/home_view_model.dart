@@ -13,6 +13,7 @@ class HomeViewModel extends BaseViewModel {
     this._tagsManager,
     this._notesManager,
     this._navigationService,
+    this._dialogService,
   ) {
     currentAccount = accountManager.currentAccount;
     tags = [];
@@ -27,6 +28,7 @@ class HomeViewModel extends BaseViewModel {
   final TagsManager _tagsManager;
   final NotesManager _notesManager;
   final NavigationService _navigationService;
+  final DialogService _dialogService;
 
   StreamSubscription _tagsStreamSubscription;
   StreamSubscription _notesStreamSubscription;
@@ -147,12 +149,16 @@ class HomeViewModel extends BaseViewModel {
       return null;
     else {
       return () async {
-        final notesToBeDeleted = notes.where((n) => n.isSelected);
-        for (final note in notesToBeDeleted) {
-          await _notesManager.deleteNote(NoteEntity(id: note.id));
-        }
+        final shouldDelete = await _dialogService.confirm('This cannot be undone.', title: 'Delete note/s?', ok: 'Delete');
 
-        onToggleEditingMode();
+        if (shouldDelete == true) {
+          final notesToBeDeleted = notes.where((n) => n.isSelected);
+          for (final note in notesToBeDeleted) {
+            await _notesManager.deleteNote(NoteEntity(id: note.id));
+          }
+
+          onToggleEditingMode();
+        }
       };
     }
   }

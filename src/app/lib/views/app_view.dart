@@ -1,11 +1,9 @@
 import 'package:app/keys/widget_keys.dart';
-import 'package:app/resources/localization/i18n.dart';
 import 'package:app/resources/resources.dart';
 import 'package:app/view_models/view_models.dart';
 import 'package:app/widgets/widgets.dart';
 import 'package:app_business/entities.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class AppView extends ModelBoundWidget<AppViewModel> {
@@ -27,24 +25,15 @@ class _AppViewState extends ModelBoundState<AppView, AppViewModel> {
   }
 
   Widget _buildApp() {
-    // Custom delegate that handles localization.
-    final i18n = I18n.delegate;
     final effectiveTheme = viewModel.settings.themeConfig == ThemeConfig.dark ? ThemeMode.dark : ThemeMode.light;
 
     return MaterialApp(
-      title: 'eNotes',
+      title: 'Smart Notes',
       debugShowCheckedModeBanner: false,
       themeMode: effectiveTheme,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       navigatorKey: AppViewKeys.navigator,
-      localizationsDelegates: [
-        i18n,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: i18n.supportedLocales,
       home: SplashWidget(),
       builder: (_, widget) => Navigator(
         onGenerateRoute: (_) => MaterialPageRoute(

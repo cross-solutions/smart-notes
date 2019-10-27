@@ -11,8 +11,6 @@ import 'package:app_util/app_util.dart';
 import 'package:googleapis/drive/v3.dart';
 
 abstract class DriveService {
-  Future<File> getSavedNotesFromCloud();
-
   Future<void> backupNotesToCloud(String ownedBy);
 
   Future<void> restoreNotesFromCloud();
@@ -25,37 +23,12 @@ class DriveServiceImpl implements DriveService {
     this._tagsRepository,
   );
 
+  static const _dataFileMimeType = 'application/json';
+  static const _dataFileName = 'smart_notes_data';
+
   final KeyStoreService _keyStoreService;
   final NotesRepository _notesRepository;
   final TagsRepository _tagsRepository;
-
-  static const _dataFileName = 'smart_notes_data';
-  static const _dataFileMimeType = 'application/json';
-
-  @override
-  Future<File> getSavedNotesFromCloud() async {
-    final client = await createClient();
-
-    try {
-      final driveApi = DriveApi(client);
-      final driveResponse = await driveApi.files.list(
-        spaces: 'appDataFolder',
-        q: 'name=\'$_dataFileName\' and mimeType=\'$_dataFileMimeType\' and trashed=false',
-      );
-
-      if (driveResponse.files.isNotEmpty) {
-        return null;
-      } else
-        return null;
-    } on DetailedApiRequestError catch (dex) {
-      if (dex.status == 401)
-        throw AuthException('Session expired');
-      else
-        rethrow;
-    } finally {
-      client.close();
-    }
-  }
 
   @override
   Future<void> backupNotesToCloud(String ownedBy) async {
@@ -100,11 +73,6 @@ class DriveServiceImpl implements DriveService {
     }
   }
 
-  Future<DriveHttpClient> createClient() async {
-    final headers = await _keyStoreService.getJson(StorageKeys.authHeader);
-    return DriveHttpClient(headers);
-  }
-
   @override
   Future<void> restoreNotesFromCloud() async {
     final client = await createClient();
@@ -141,5 +109,10 @@ class DriveServiceImpl implements DriveService {
     } finally {
       client.close();
     }
+  }
+
+  Future<DriveHttpClient> createClient() async {
+    final headers = await _keyStoreService.getJson(StorageKeys.authHeader);
+    return DriveHttpClient(headers);
   }
 }

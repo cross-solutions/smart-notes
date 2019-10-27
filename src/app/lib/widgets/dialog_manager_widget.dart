@@ -2,6 +2,7 @@ import 'package:app/service_locator.dart';
 import 'package:app/services/dialog/dialog_service.dart';
 import 'package:flutter/material.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:package_info/package_info.dart';
 
 /// A custom widget for showing dialogs.
 ///
@@ -30,6 +31,7 @@ class _DialogManagerWidgetState extends State<DialogManagerWidget> {
     _dialogService.registerCallbacks(
       onAlert: (message, title, ok) => _showAlertDialog(message, title, ok),
       onConfirm: (message, title, ok, cancel) => _showConfirmationDialog(message, title, ok, cancel),
+      onAppInfo: () => _showAppInfoDialog(),
     );
     BackButtonInterceptor.add(myInterceptor);
 
@@ -95,9 +97,33 @@ class _DialogManagerWidgetState extends State<DialogManagerWidget> {
     return result;
   }
 
+  void _showAppInfoDialog() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    final appName = packageInfo.appName;
+    final version = packageInfo.version;
+    final buildNumber = packageInfo.buildNumber;
+
+    _showingDialog = true;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AboutDialog(
+          applicationIcon: FlutterLogo(),
+          applicationVersion: 'v$version, build $buildNumber',
+          applicationName: appName,
+          applicationLegalese: 'Copyright © 2019 Cross Solutions',
+        );
+      },
+    );
+
+    _showingDialog = false;
+  }
+
   bool myInterceptor(bool stopDefaultButtonEvent) {
     // This handles the back navigation in Android.
     // Pops the shown dialog.
+
     if (_showingDialog) {
       Navigator.of(context).pop();
       return true;

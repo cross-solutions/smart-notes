@@ -109,7 +109,7 @@ class _NoteViewState extends ModelBoundState<NoteView, NoteViewModel> {
             children: <Widget>[
               Flexible(
                 child: Text(
-                  viewModel.note.formattedLastModified ?? viewModel.note.formattedCreated,
+                  viewModel.note.formattedLastModified ?? viewModel.note.formattedCreated ?? '',
                   style: Theme.of(context).textTheme.caption,
                 ),
               ),

@@ -113,7 +113,7 @@ class NoteViewModel extends InitializableViewModel<NoteItemModel> {
   Future<void> deleteNoteToEdit() async {
     final shouldDelete = await _dialogService.confirm('This cannot be undone.', title: 'Delete note?', ok: 'Delete');
 
-    if (shouldDelete) {
+    if (shouldDelete == true) {
       await _notesManager.deleteNote(NoteEntity(id: note.id));
       _navigationService.pop();
     }

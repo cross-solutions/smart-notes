@@ -46,6 +46,7 @@ class ServiceLocator {
             i.get<TagsManager>(),
             i.get<NotesManager>(),
             i.get<NavigationService>(),
+            i.get<DialogService>(),
           ))
       ..registerFactory<NoteViewModel>(() => NoteViewModel(
             i.get<NotesManager>(),

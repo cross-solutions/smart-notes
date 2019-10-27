@@ -36,7 +36,7 @@ class _SettingsViewState extends ModelBoundState<SettingsView, SettingsViewModel
                   ),
                   ListTile(
                     title: Text('Restore your data'),
-                    subtitle: Text('Download your notes from a previous backup.'),
+                    subtitle: Text('Download your data from a previous backup.'),
                     onTap: viewModel.onRestoreNotes,
                     trailing: viewModel.isRestoring
                         ? Container(
@@ -49,7 +49,7 @@ class _SettingsViewState extends ModelBoundState<SettingsView, SettingsViewModel
                   ),
                   ListTile(
                     title: Text('Backup your data'),
-                    subtitle: Text('Save your current notes.'),
+                    subtitle: Text('Export and save your current data.'),
                     onTap: viewModel.onBackupNotes,
                     trailing: viewModel.isBackuping
                         ? Container(
@@ -63,6 +63,10 @@ class _SettingsViewState extends ModelBoundState<SettingsView, SettingsViewModel
                   ListTile(
                     title: Text('Logout'),
                     onTap: viewModel.onSignOut,
+                  ),
+                  ListTile(
+                    title: Text('About'),
+                    onTap: viewModel.onShowAppInfo,
                   ),
                 ],
               ),
