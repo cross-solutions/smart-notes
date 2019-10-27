@@ -1,13 +1,17 @@
-# Smart Notes
+
+<img src="app_logo.png" width="112" />
+
+# Smart Notes 
+
 [![Build status](https://dev.azure.com/cross-solutions/eNotes-FlutterPH-Hackathon/_apis/build/status/eNotes-FlutterPH-Hackathon-CI)](https://dev.azure.com/cross-solutions/eNotes-FlutterPH-Hackathon/_build/latest?definitionId=3) [![Generic badge](https://img.shields.io/badge/App%20Center-Install%20Android-<COLOR>.svg)](https://install.appcenter.ms/orgs/cross-solutions/apps/smart-notes-android/distribution_groups/public) [![made-with-Markdown](https://img.shields.io/badge/Made%20with-Flutter-1389FD.svg)](http://flutter.dev) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)]()
 
 <img src="app_screenshot.png" />
 <br />
 <br />
 
-A note-taking app using Google services such as Google Sign In, Google Drive, and Firebase ML Vision.
+A note-taking app powered by Google services such as Google Sign In, Google Drive, and Firebase ML Vision.
 
-This is an entry to FlutterPH's Online Hackathon 2019.
+This is an official entry to FlutterPH's Online Hackathon 2019.
 
 
 #### Notable Plugins/Technologies Used
@@ -22,3 +26,9 @@ This is an entry to FlutterPH's Online Hackathon 2019.
 Please send me an email at dustinboy619@gmail.com with your local Android debug certificate's SHA-1 fingerprint.
 We will then give you the `google-services.json` config file needed in order to run the project. Place this in
 `src/app/android/app` directory.
+
+#### Installing
+
+You can install the Android app by simply scanning the code below. This will redirect you to a page where you can download the latest APK.
+
+![](qr_code.png)

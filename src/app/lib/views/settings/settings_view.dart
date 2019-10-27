@@ -25,51 +25,71 @@ class _SettingsViewState extends ModelBoundState<SettingsView, SettingsViewModel
                 style: Theme.of(context).textTheme.title,
               ),
             ),
-            body: Container(
+            body: ListView(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Column(
-                children: <Widget>[
-                  SwitchListTile(
-                    value: viewModel.isDarkMode ?? false,
-                    onChanged: viewModel.onUpdateTheme,
-                    title: Text('Dark Mode'),
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Appearance',
+                    style: Theme.of(context).textTheme.caption,
                   ),
-                  ListTile(
-                    title: Text('Restore your data'),
-                    subtitle: Text('Download your data from a previous backup.'),
-                    onTap: viewModel.onRestoreNotes,
-                    trailing: viewModel.isRestoring
-                        ? Container(
-                            padding: const EdgeInsets.only(right: 16.0),
-                            width: 40.0,
-                            height: 24.0,
-                            child: CircularProgressIndicator(),
-                          )
-                        : null,
+                ),
+                SwitchListTile(
+                  value: viewModel.isDarkMode ?? false,
+                  onChanged: viewModel.onUpdateTheme,
+                  title: Text('Dark Mode'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Account and Syncing',
+                    style: Theme.of(context).textTheme.caption,
                   ),
-                  ListTile(
-                    title: Text('Backup your data'),
-                    subtitle: Text('Export and save your current data.'),
-                    onTap: viewModel.onBackupNotes,
-                    trailing: viewModel.isBackuping
-                        ? Container(
-                            padding: const EdgeInsets.only(right: 16.0),
-                            width: 40.0,
-                            height: 24.0,
-                            child: CircularProgressIndicator(),
-                          )
-                        : null,
+                ),
+                ListTile(
+                  title: Text('Restore your data'),
+                  subtitle: Text('Download your data from a previous backup'),
+                  onTap: viewModel.onRestoreNotes,
+                  trailing: viewModel.isRestoring
+                      ? Container(
+                          padding: const EdgeInsets.only(right: 16.0),
+                          width: 40.0,
+                          height: 24.0,
+                          child: CircularProgressIndicator(),
+                        )
+                      : null,
+                ),
+                ListTile(
+                  title: Text('Backup your data'),
+                  subtitle: Text('Export and save your current data'),
+                  onTap: viewModel.onBackupNotes,
+                  trailing: viewModel.isBackuping
+                      ? Container(
+                          padding: const EdgeInsets.only(right: 16.0),
+                          width: 40.0,
+                          height: 24.0,
+                          child: CircularProgressIndicator(),
+                        )
+                      : null,
+                ),
+                ListTile(
+                  title: Text('Logout'),
+                  onTap: viewModel.onSignOut,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Application',
+                    style: Theme.of(context).textTheme.caption,
                   ),
-                  ListTile(
-                    title: Text('Logout'),
-                    onTap: viewModel.onSignOut,
-                  ),
-                  ListTile(
-                    title: Text('About'),
-                    onTap: viewModel.onShowAppInfo,
-                  ),
-                ],
-              ),
+                ),
+                ListTile(
+                  title: Text('About Smart Notes'),
+                  subtitle: Text('View app info and open source licenses'),
+                  onTap: viewModel.onShowAppInfo,
+                ),
+              ],
             ),
           );
         },

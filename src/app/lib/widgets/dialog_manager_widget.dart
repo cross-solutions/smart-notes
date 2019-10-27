@@ -1,5 +1,7 @@
+import 'package:app/resources/resources.dart';
 import 'package:app/service_locator.dart';
 import 'package:app/services/dialog/dialog_service.dart';
+import 'package:app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:package_info/package_info.dart';
@@ -109,10 +111,27 @@ class _DialogManagerWidgetState extends State<DialogManagerWidget> {
       context: context,
       builder: (context) {
         return AboutDialog(
-          applicationIcon: FlutterLogo(),
+          applicationIcon: Image.asset(AppImages.im_logo_48),
           applicationVersion: 'v$version, build $buildNumber',
           applicationName: appName,
-          applicationLegalese: 'Copyright © 2019 Cross Solutions',
+          applicationLegalese: 'Copyright © 2019 - Cross Solutions',
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+              child: ExtendedColumn(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 12.0,
+                children: <Widget>[
+                  Text(
+                    'A note-taking app powered by Google services such as Google Sign In, Google Drive, and Firebase ML Vision.',
+                  ),
+                  Text(
+                    'This is an official entry to FlutterPH\'s Online Hackathon 2019.',
+                  )
+                ],
+              ),
+            )
+          ],
         );
       },
     );

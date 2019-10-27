@@ -95,7 +95,7 @@ class SettingsViewModel extends BaseViewModel {
 
       if (shouldRestore == true) {
         isRestoring = true;
-        await _settingsManager.restoreNotesFromCloud();
+        await _settingsManager.restoreNotesFromCloud(_accountManager.currentAccount.id);
         _dialogService.alert('Your notes has been restored.', title: 'Restore notes');
       }
     } on AuthException {

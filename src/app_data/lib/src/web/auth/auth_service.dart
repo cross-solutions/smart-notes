@@ -10,11 +10,12 @@ abstract class AuthService {
   Future<GoogleSignInAccount> signIn();
 
   Future<void> signOut();
+
+  Future<bool> isCurrentlySignedIn();
 }
 
 class AuthServiceImpl extends AuthService {
   final _googleAuth = GoogleSignIn(
-    
     scopes: <String>[
       'email',
       DriveApi.DriveAppdataScope,
@@ -57,4 +58,7 @@ class AuthServiceImpl extends AuthService {
 
   @override
   Future<void> signOut() => _googleAuth.signOut();
+
+  @override
+  Future<bool> isCurrentlySignedIn() => _googleAuth.isSignedIn();
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class AppImages {
   static const ic_google = '$_rootPath/ic_google.png';
   static const im_empty_note = '$_rootPath/im_empty_note.png';
+  static const im_logo_48 = '$_rootPath/im_logo_48.png';
+  static const im_logo_128 = '$_rootPath/im_logo_128.png';
 
   static const _rootPath = 'assets/graphics';
 }
@@ -118,6 +120,8 @@ class AppTheme {
   static final darkTheme = ThemeData(
     fontFamily: 'Open Sans',
     brightness: Brightness.dark,
+    scaffoldBackgroundColor: Color(0xFF1c1c1c),
+    cardColor: Colors.grey[850],
     primarySwatch: MaterialColor(
       4294872064,
       {

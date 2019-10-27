@@ -17,7 +17,7 @@ abstract class SettingsManager {
 
   Future<void> backupNotesToCloud(String ownedBy);
 
-  Future<void> restoreNotesFromCloud();
+  Future<void> restoreNotesFromCloud(String ownedBy);
 
   void addListener(void Function() callback);
 
@@ -63,7 +63,7 @@ class SettingsManagerImpl implements SettingsManager {
   }
 
   @override
-  Future<void> restoreNotesFromCloud() => _driveService.restoreNotesFromCloud();
+  Future<void> restoreNotesFromCloud(String ownedBy) => _driveService.restoreNotesFromCloud(ownedBy);
 
   @override
   Future<void> updateTheme(ThemeConfig theme) async {

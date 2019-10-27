@@ -26,6 +26,8 @@ class NotesRepository extends BaseRepository<Notes, NoteDataObject> {
     });
   }
 
+  Future<void> deleteOwnedNotes(String ownedBy) => (delete(table)..where((n) => n.ownedBy.equals(ownedBy))).go();
+
   Stream<List<NoteWithTag>> watchOwnedNotesWithTag(String ownedBy, String tagId) {
     final query = (select(table)
         ..where((t) => t.ownedBy.equals(ownedBy))
