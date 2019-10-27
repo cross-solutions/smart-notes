@@ -1,9 +1,7 @@
-<div style="display: flex; align-items: center">
-    <img src="app_logo.png" width="64" style="margin-right: 12px" />  
-    <h1>Smart Notes</h1>
-</div>
 
-[![Build status](https://dev.azure.com/cross-solutions/eNotes-FlutterPH-Hackathon/_apis/build/status/eNotes-FlutterPH-Hackathon-CI)](https://dev.azure.com/cross-solutions/eNotes-FlutterPH-Hackathon/_build/latest?definitionId=3) [![Generic badge](https://img.shields.io/badge/App%20Center-Install%20Android-<COLOR>.svg)](https://install.appcenter.ms/orgs/cross-solutions/apps/smart-notes-android/distribution_groups/public) [![made-with-Markdown](https://img.shields.io/badge/Made%20with-Flutter-1389FD.svg)](http://flutter.dev) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)]()
+<img src="app_logo.png" width="64" style="margin-right: 12px" />
+
+# Smart Notes [![Build status](https://dev.azure.com/cross-solutions/eNotes-FlutterPH-Hackathon/_apis/build/status/eNotes-FlutterPH-Hackathon-CI)](https://dev.azure.com/cross-solutions/eNotes-FlutterPH-Hackathon/_build/latest?definitionId=3) [![Generic badge](https://img.shields.io/badge/App%20Center-Install%20Android-<COLOR>.svg)](https://install.appcenter.ms/orgs/cross-solutions/apps/smart-notes-android/distribution_groups/public) [![made-with-Markdown](https://img.shields.io/badge/Made%20with-Flutter-1389FD.svg)](http://flutter.dev) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)]()
 
 <img src="app_screenshot.png" />
 <br />
