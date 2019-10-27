@@ -25,10 +25,7 @@ class _HomeViewState extends ModelBoundState<HomeView, HomeViewModel> {
         builder: (context, child, viewModel) {
           final isDeleting = viewModel.editingMode == ListEditingMode.delete;
           return WillPopScope(
-            onWillPop: () async {
-              if (isDeleting) viewModel.onToggleEditingMode();
-              return !isDeleting;
-            },
+            onWillPop: viewModel.onBackPressed,
             child: Scaffold(
               appBar: _buildAppBar(isDeleting),
               body: _buildBody(isDeleting),

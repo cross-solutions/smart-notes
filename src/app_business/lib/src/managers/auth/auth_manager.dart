@@ -43,9 +43,8 @@ class AuthManagerImpl implements AuthManager {
 
   @override
   Future<void> signOut() async {
-    final accountDO = _accountMapper.toDataObject(_accountManager.currentAccount);
     await _authService.signOut();
-    await _accountRepository.deleteItem(accountDO);
+    await _accountRepository.deleteAll();
     await _keyStoreService.delete(StorageKeys.authHeader);
   }
 
@@ -54,7 +53,14 @@ class AuthManagerImpl implements AuthManager {
     final accountDO = await _accountRepository.selectSingle();
 
     if (accountDO != null) {
-      final account = _accountMapper.toEntity(accountDO);
+      final googleAccount = await _authService.getCurrentlySignedInAccount();
+      final account = _accountMapper.toEntityFromGoogleAccount(googleAccount);
+      final accountDO = _accountMapper.toDataObject(account);
+      final authHeader = await googleAccount.authHeaders;
+
+      await _keyStoreService.setJson(StorageKeys.authHeader, authHeader);
+      await _accountRepository.deleteAll();
+      await _accountRepository.insertItem(accountDO);
       _accountManager.setCurrentAccount(account);
     } else
       throw AuthException('Sign in required');

@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class AddOrEditNoteView extends ModelBoundWidget<AddOrEditNoteViewModel> {
-  AddOrEditNoteView(AddOrEditNoteViewModel viewModel) : super(viewModel);
+class NoteView extends ModelBoundWidget<NoteViewModel> {
+  NoteView(NoteViewModel viewModel) : super(viewModel);
 
   @override
-  _AddOrEditNoteViewState createState() => _AddOrEditNoteViewState();
+  _NoteViewState createState() => _NoteViewState();
 }
 
-class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEditNoteViewModel> {
+class _NoteViewState extends ModelBoundState<NoteView, NoteViewModel> {
   final _titleController = TextEditingController();
   final _noteController = TextEditingController();
 
@@ -32,9 +32,9 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<AddOrEditNoteViewModel>(
+    return ScopedModel<NoteViewModel>(
       model: viewModel,
-      child: ScopedModelDescendant<AddOrEditNoteViewModel>(
+      child: ScopedModelDescendant<NoteViewModel>(
         builder: (context, child, viewModel) {
           if (viewModel.isEditing) {
             _titleController.text = viewModel.note.title;
@@ -60,23 +60,6 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         actions: viewModel.isEditing ? _buildEditActions() : _buildSaveActions(),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(viewModel.note.formattedLastModified),
-              IconButton(
-                padding: const EdgeInsets.all(0.0),
-                icon: Icon(MdiIcons.textRecognition),
-                onPressed: viewModel.onStartTextRecognitionFromCamera,
-                tooltip: 'Recognize text',
-              )
-            ],
-          ),
-        ),
-      ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Padding(
@@ -97,7 +80,7 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
                 style: Theme.of(context).textTheme.title,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
                   focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
                   hintText: 'My awesome note',
                 ),
@@ -109,11 +92,33 @@ class _AddOrEditNoteViewState extends ModelBoundState<AddOrEditNoteView, AddOrEd
                 maxLines: null,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
                   focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
                   hintText: 'What\'s on your mind?',
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Flexible(
+                child: Text(
+                  viewModel.note.formattedLastModified ?? viewModel.note.formattedCreated ?? '',
+                  style: Theme.of(context).textTheme.caption,
+                ),
+              ),
+              IconButton(
+                padding: const EdgeInsets.all(0.0),
+                icon: Icon(MdiIcons.textRecognition),
+                onPressed: viewModel.onStartTextRecognitionFromCamera,
+                tooltip: 'Recognize text',
+              )
             ],
           ),
         ),

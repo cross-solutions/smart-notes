@@ -7,6 +7,7 @@ class NoteEntity extends BaseEntity {
     this.ownedBy,
     this.title,
     this.content,
+    this.created,
     this.lastModified,
     this.tag,
   });
@@ -15,6 +16,7 @@ class NoteEntity extends BaseEntity {
   final String ownedBy;
   final String title;
   final String content;
+  final DateTime created;
   final DateTime lastModified;
   final TagEntity tag;
 }

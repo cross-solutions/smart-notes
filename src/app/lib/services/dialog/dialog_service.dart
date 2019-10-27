@@ -5,36 +5,25 @@ typedef AlertCallback = Future<void> Function(String message, String title, Stri
 typedef ConfirmCallback = Future<bool> Function(String message, String title, String ok, String cancel);
 
 abstract class DialogService {
-  void registerCallbacks({AlertCallback onAlert, ConfirmCallback onConfirm});
+  void registerCallbacks({AlertCallback onAlert, ConfirmCallback onConfirm, void Function() onAppInfo});
 
-  /// Shows an alert dialog for user acknowledgement.
   Future<void> alert(String message, {String title, String ok = 'Ok'});
 
-  /// Shows an alert dialog for user confirmation.
-  ///
-  /// Usage:
-  /// ```
-  /// bool confirmed = await confirm('Are you sure?');
-  ///
-  /// if (confirmed == null) {
-  ///   // Dialog cancelled using back button (Android) or user tapped outside dialog.
-  /// } else if (confirmed) {
-  ///   // Confirm button clicked.
-  /// } else if (!confirmed) {
-  ///   // Cancel button clicked.
-  /// }
-  /// ```
   Future<bool> confirm(String message, {String title, String ok = 'Ok', String cancel = 'Cancel'});
+
+  void appInfo();
 }
 
 class DialogServiceImpl implements DialogService {
   AlertCallback _onAlert;
   ConfirmCallback _onConfirm;
+  void Function() _onAppInfo;
 
   @override
-  void registerCallbacks({AlertCallback onAlert, ConfirmCallback onConfirm}) {
+  void registerCallbacks({AlertCallback onAlert, ConfirmCallback onConfirm, void Function() onAppInfo}) {
     _onAlert = onAlert;
     _onConfirm = onConfirm;
+    _onAppInfo = onAppInfo;
   }
 
   @override
@@ -43,4 +32,7 @@ class DialogServiceImpl implements DialogService {
   @override
   Future<bool> confirm(String message, {String title, String ok = 'Ok', String cancel = 'Cancel'}) =>
       _onConfirm(message, title, ok, cancel);
+
+  @override
+  void appInfo() => _onAppInfo();
 }

@@ -1,0 +1,4 @@
+enum TagTransactionType {
+  choose,
+  modify,
+}

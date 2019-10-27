@@ -5,6 +5,7 @@ class TagItemModel extends ListenableModel {
     this.id,
     this.name,
     this.created,
+    this.lastModified,
   ) {
     isSelected = false;
   }
@@ -12,6 +13,7 @@ class TagItemModel extends ListenableModel {
   final String id;
   final String name;
   final DateTime created;
+  final DateTime lastModified;
 
   bool _isSelected;
   bool get isSelected => _isSelected;

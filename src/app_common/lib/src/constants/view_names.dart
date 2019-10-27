@@ -1,7 +1,7 @@
 class ViewNames {
   static const loginView = 'loginView';
   static const homeView = 'homeView';
-  static const addNoteView = 'addNoteView';
+  static const noteView = 'noteView';
   static const settingsView = 'settingsView';
-  static const editTagsView = 'editTagsView';
+  static const tagsView = 'tagsView';
 }

@@ -65,8 +65,17 @@ class SettingsViewModel extends BaseViewModel {
   Future<void> onBackupNotes() async {
     if (isBackuping || isRestoring) return;
     try {
-      isBackuping = true;
-      await _settingsManager.backupNotesToCloud(_accountManager.currentAccount.id);
+      final shouldBackup = await _dialogService.confirm(
+        'Creating a backup of your current local notes will overwrite any existing backup.',
+        title: 'Backup notes?',
+        ok: 'Backup',
+      );
+
+      if (shouldBackup == true) {
+        isBackuping = true;
+        await _settingsManager.backupNotesToCloud(_accountManager.currentAccount.id);
+        _dialogService.alert('Your notes has been uploaded and saved.', title: 'Backup notes');
+      }
     } on AuthException {
       debugInfo('Sign in required');
       _dialogService.alert('Please relogin and try to backup again.', title: 'Session expired');
@@ -84,9 +93,10 @@ class SettingsViewModel extends BaseViewModel {
         ok: 'Restore',
       );
 
-      if (shouldRestore) {
+      if (shouldRestore == true) {
         isRestoring = true;
         await _settingsManager.restoreNotesFromCloud();
+        _dialogService.alert('Your notes has been restored.', title: 'Restore notes');
       }
     } on AuthException {
       debugInfo('Sign in required');
@@ -114,6 +124,8 @@ class SettingsViewModel extends BaseViewModel {
     final newTheme = isDarkMode ? ThemeConfig.dark : ThemeConfig.light;
     return _settingsManager.updateTheme(newTheme);
   }
+
+  void onShowAppInfo() => _dialogService.appInfo();
 
   void _onSettingsChanged() => isDarkMode = _settingsManager.currentSettings.themeConfig == ThemeConfig.dark;
 }

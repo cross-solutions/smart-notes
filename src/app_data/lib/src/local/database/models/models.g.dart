@@ -259,11 +259,13 @@ class TagDataObject extends DataClass implements Insertable<TagDataObject> {
   final String ownedBy;
   final String name;
   final DateTime created;
+  final DateTime lastModified;
   TagDataObject(
       {@required this.id,
       this.ownedBy,
       @required this.name,
-      @required this.created});
+      @required this.created,
+      this.lastModified});
   factory TagDataObject.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -277,6 +279,8 @@ class TagDataObject extends DataClass implements Insertable<TagDataObject> {
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
       created: dateTimeType
           .mapFromDatabaseResponse(data['${effectivePrefix}created']),
+      lastModified: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}last_modified']),
     );
   }
   factory TagDataObject.fromJson(Map<String, dynamic> json,
@@ -286,6 +290,7 @@ class TagDataObject extends DataClass implements Insertable<TagDataObject> {
       ownedBy: serializer.fromJson<String>(json['ownedBy']),
       name: serializer.fromJson<String>(json['name']),
       created: serializer.fromJson<DateTime>(json['created']),
+      lastModified: serializer.fromJson<DateTime>(json['lastModified']),
     );
   }
   @override
@@ -296,6 +301,7 @@ class TagDataObject extends DataClass implements Insertable<TagDataObject> {
       'ownedBy': serializer.toJson<String>(ownedBy),
       'name': serializer.toJson<String>(name),
       'created': serializer.toJson<DateTime>(created),
+      'lastModified': serializer.toJson<DateTime>(lastModified),
     };
   }
 
@@ -310,16 +316,24 @@ class TagDataObject extends DataClass implements Insertable<TagDataObject> {
       created: created == null && nullToAbsent
           ? const Value.absent()
           : Value(created),
+      lastModified: lastModified == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastModified),
     );
   }
 
   TagDataObject copyWith(
-          {String id, String ownedBy, String name, DateTime created}) =>
+          {String id,
+          String ownedBy,
+          String name,
+          DateTime created,
+          DateTime lastModified}) =>
       TagDataObject(
         id: id ?? this.id,
         ownedBy: ownedBy ?? this.ownedBy,
         name: name ?? this.name,
         created: created ?? this.created,
+        lastModified: lastModified ?? this.lastModified,
       );
   @override
   String toString() {
@@ -327,14 +341,19 @@ class TagDataObject extends DataClass implements Insertable<TagDataObject> {
           ..write('id: $id, ')
           ..write('ownedBy: $ownedBy, ')
           ..write('name: $name, ')
-          ..write('created: $created')
+          ..write('created: $created, ')
+          ..write('lastModified: $lastModified')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(ownedBy.hashCode, $mrjc(name.hashCode, created.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          ownedBy.hashCode,
+          $mrjc(
+              name.hashCode, $mrjc(created.hashCode, lastModified.hashCode)))));
   @override
   bool operator ==(other) =>
       identical(this, other) ||
@@ -342,7 +361,8 @@ class TagDataObject extends DataClass implements Insertable<TagDataObject> {
           other.id == this.id &&
           other.ownedBy == this.ownedBy &&
           other.name == this.name &&
-          other.created == this.created);
+          other.created == this.created &&
+          other.lastModified == this.lastModified);
 }
 
 class TagsCompanion extends UpdateCompanion<TagDataObject> {
@@ -350,17 +370,20 @@ class TagsCompanion extends UpdateCompanion<TagDataObject> {
   final Value<String> ownedBy;
   final Value<String> name;
   final Value<DateTime> created;
+  final Value<DateTime> lastModified;
   const TagsCompanion({
     this.id = const Value.absent(),
     this.ownedBy = const Value.absent(),
     this.name = const Value.absent(),
     this.created = const Value.absent(),
+    this.lastModified = const Value.absent(),
   });
   TagsCompanion.insert({
     @required String id,
     this.ownedBy = const Value.absent(),
     @required String name,
     @required DateTime created,
+    this.lastModified = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
         created = Value(created);
@@ -368,12 +391,14 @@ class TagsCompanion extends UpdateCompanion<TagDataObject> {
       {Value<String> id,
       Value<String> ownedBy,
       Value<String> name,
-      Value<DateTime> created}) {
+      Value<DateTime> created,
+      Value<DateTime> lastModified}) {
     return TagsCompanion(
       id: id ?? this.id,
       ownedBy: ownedBy ?? this.ownedBy,
       name: name ?? this.name,
       created: created ?? this.created,
+      lastModified: lastModified ?? this.lastModified,
     );
   }
 }
@@ -430,8 +455,23 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, TagDataObject> {
     );
   }
 
+  final VerificationMeta _lastModifiedMeta =
+      const VerificationMeta('lastModified');
+  GeneratedDateTimeColumn _lastModified;
   @override
-  List<GeneratedColumn> get $columns => [id, ownedBy, name, created];
+  GeneratedDateTimeColumn get lastModified =>
+      _lastModified ??= _constructLastModified();
+  GeneratedDateTimeColumn _constructLastModified() {
+    return GeneratedDateTimeColumn(
+      'last_modified',
+      $tableName,
+      true,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, ownedBy, name, created, lastModified];
   @override
   $TagsTable get asDslTable => this;
   @override
@@ -465,6 +505,14 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, TagDataObject> {
     } else if (created.isRequired && isInserting) {
       context.missing(_createdMeta);
     }
+    if (d.lastModified.present) {
+      context.handle(
+          _lastModifiedMeta,
+          lastModified.isAcceptableValue(
+              d.lastModified.value, _lastModifiedMeta));
+    } else if (lastModified.isRequired && isInserting) {
+      context.missing(_lastModifiedMeta);
+    }
     return context;
   }
 
@@ -491,6 +539,10 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, TagDataObject> {
     if (d.created.present) {
       map['created'] = Variable<DateTime, DateTimeType>(d.created.value);
     }
+    if (d.lastModified.present) {
+      map['last_modified'] =
+          Variable<DateTime, DateTimeType>(d.lastModified.value);
+    }
     return map;
   }
 
@@ -505,15 +557,17 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
   final String ownedBy;
   final String title;
   final String content;
-  final String categoryId;
-  final DateTime lastmodified;
+  final String tagId;
+  final DateTime created;
+  final DateTime lastModified;
   NoteDataObject(
       {@required this.id,
       this.ownedBy,
       @required this.title,
       @required this.content,
-      this.categoryId,
-      @required this.lastmodified});
+      this.tagId,
+      @required this.created,
+      this.lastModified});
   factory NoteDataObject.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -528,10 +582,12 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       content:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}content']),
-      categoryId: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}category_id']),
-      lastmodified: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}lastmodified']),
+      tagId:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}tag_id']),
+      created: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}created']),
+      lastModified: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}last_modified']),
     );
   }
   factory NoteDataObject.fromJson(Map<String, dynamic> json,
@@ -541,8 +597,9 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
       ownedBy: serializer.fromJson<String>(json['ownedBy']),
       title: serializer.fromJson<String>(json['title']),
       content: serializer.fromJson<String>(json['content']),
-      categoryId: serializer.fromJson<String>(json['categoryId']),
-      lastmodified: serializer.fromJson<DateTime>(json['lastmodified']),
+      tagId: serializer.fromJson<String>(json['tagId']),
+      created: serializer.fromJson<DateTime>(json['created']),
+      lastModified: serializer.fromJson<DateTime>(json['lastModified']),
     );
   }
   @override
@@ -553,8 +610,9 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
       'ownedBy': serializer.toJson<String>(ownedBy),
       'title': serializer.toJson<String>(title),
       'content': serializer.toJson<String>(content),
-      'categoryId': serializer.toJson<String>(categoryId),
-      'lastmodified': serializer.toJson<DateTime>(lastmodified),
+      'tagId': serializer.toJson<String>(tagId),
+      'created': serializer.toJson<DateTime>(created),
+      'lastModified': serializer.toJson<DateTime>(lastModified),
     };
   }
 
@@ -570,12 +628,14 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
-      categoryId: categoryId == null && nullToAbsent
+      tagId:
+          tagId == null && nullToAbsent ? const Value.absent() : Value(tagId),
+      created: created == null && nullToAbsent
           ? const Value.absent()
-          : Value(categoryId),
-      lastmodified: lastmodified == null && nullToAbsent
+          : Value(created),
+      lastModified: lastModified == null && nullToAbsent
           ? const Value.absent()
-          : Value(lastmodified),
+          : Value(lastModified),
     );
   }
 
@@ -584,15 +644,17 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           String ownedBy,
           String title,
           String content,
-          String categoryId,
-          DateTime lastmodified}) =>
+          String tagId,
+          DateTime created,
+          DateTime lastModified}) =>
       NoteDataObject(
         id: id ?? this.id,
         ownedBy: ownedBy ?? this.ownedBy,
         title: title ?? this.title,
         content: content ?? this.content,
-        categoryId: categoryId ?? this.categoryId,
-        lastmodified: lastmodified ?? this.lastmodified,
+        tagId: tagId ?? this.tagId,
+        created: created ?? this.created,
+        lastModified: lastModified ?? this.lastModified,
       );
   @override
   String toString() {
@@ -601,8 +663,9 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           ..write('ownedBy: $ownedBy, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
-          ..write('categoryId: $categoryId, ')
-          ..write('lastmodified: $lastmodified')
+          ..write('tagId: $tagId, ')
+          ..write('created: $created, ')
+          ..write('lastModified: $lastModified')
           ..write(')'))
         .toString();
   }
@@ -614,8 +677,10 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           ownedBy.hashCode,
           $mrjc(
               title.hashCode,
-              $mrjc(content.hashCode,
-                  $mrjc(categoryId.hashCode, lastmodified.hashCode))))));
+              $mrjc(
+                  content.hashCode,
+                  $mrjc(tagId.hashCode,
+                      $mrjc(created.hashCode, lastModified.hashCode)))))));
   @override
   bool operator ==(other) =>
       identical(this, other) ||
@@ -624,8 +689,9 @@ class NoteDataObject extends DataClass implements Insertable<NoteDataObject> {
           other.ownedBy == this.ownedBy &&
           other.title == this.title &&
           other.content == this.content &&
-          other.categoryId == this.categoryId &&
-          other.lastmodified == this.lastmodified);
+          other.tagId == this.tagId &&
+          other.created == this.created &&
+          other.lastModified == this.lastModified);
 }
 
 class NotesCompanion extends UpdateCompanion<NoteDataObject> {
@@ -633,41 +699,46 @@ class NotesCompanion extends UpdateCompanion<NoteDataObject> {
   final Value<String> ownedBy;
   final Value<String> title;
   final Value<String> content;
-  final Value<String> categoryId;
-  final Value<DateTime> lastmodified;
+  final Value<String> tagId;
+  final Value<DateTime> created;
+  final Value<DateTime> lastModified;
   const NotesCompanion({
     this.id = const Value.absent(),
     this.ownedBy = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
-    this.categoryId = const Value.absent(),
-    this.lastmodified = const Value.absent(),
+    this.tagId = const Value.absent(),
+    this.created = const Value.absent(),
+    this.lastModified = const Value.absent(),
   });
   NotesCompanion.insert({
     @required String id,
     this.ownedBy = const Value.absent(),
     @required String title,
     @required String content,
-    this.categoryId = const Value.absent(),
-    @required DateTime lastmodified,
+    this.tagId = const Value.absent(),
+    @required DateTime created,
+    this.lastModified = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         content = Value(content),
-        lastmodified = Value(lastmodified);
+        created = Value(created);
   NotesCompanion copyWith(
       {Value<String> id,
       Value<String> ownedBy,
       Value<String> title,
       Value<String> content,
-      Value<String> categoryId,
-      Value<DateTime> lastmodified}) {
+      Value<String> tagId,
+      Value<DateTime> created,
+      Value<DateTime> lastModified}) {
     return NotesCompanion(
       id: id ?? this.id,
       ownedBy: ownedBy ?? this.ownedBy,
       title: title ?? this.title,
       content: content ?? this.content,
-      categoryId: categoryId ?? this.categoryId,
-      lastmodified: lastmodified ?? this.lastmodified,
+      tagId: tagId ?? this.tagId,
+      created: created ?? this.created,
+      lastModified: lastModified ?? this.lastModified,
     );
   }
 }
@@ -724,35 +795,47 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
     );
   }
 
-  final VerificationMeta _categoryIdMeta = const VerificationMeta('categoryId');
-  GeneratedTextColumn _categoryId;
+  final VerificationMeta _tagIdMeta = const VerificationMeta('tagId');
+  GeneratedTextColumn _tagId;
   @override
-  GeneratedTextColumn get categoryId => _categoryId ??= _constructCategoryId();
-  GeneratedTextColumn _constructCategoryId() {
+  GeneratedTextColumn get tagId => _tagId ??= _constructTagId();
+  GeneratedTextColumn _constructTagId() {
     return GeneratedTextColumn(
-      'category_id',
+      'tag_id',
       $tableName,
       true,
     );
   }
 
-  final VerificationMeta _lastmodifiedMeta =
-      const VerificationMeta('lastmodified');
-  GeneratedDateTimeColumn _lastmodified;
+  final VerificationMeta _createdMeta = const VerificationMeta('created');
+  GeneratedDateTimeColumn _created;
   @override
-  GeneratedDateTimeColumn get lastmodified =>
-      _lastmodified ??= _constructLastmodified();
-  GeneratedDateTimeColumn _constructLastmodified() {
+  GeneratedDateTimeColumn get created => _created ??= _constructCreated();
+  GeneratedDateTimeColumn _constructCreated() {
     return GeneratedDateTimeColumn(
-      'lastmodified',
+      'created',
       $tableName,
       false,
     );
   }
 
+  final VerificationMeta _lastModifiedMeta =
+      const VerificationMeta('lastModified');
+  GeneratedDateTimeColumn _lastModified;
+  @override
+  GeneratedDateTimeColumn get lastModified =>
+      _lastModified ??= _constructLastModified();
+  GeneratedDateTimeColumn _constructLastModified() {
+    return GeneratedDateTimeColumn(
+      'last_modified',
+      $tableName,
+      true,
+    );
+  }
+
   @override
   List<GeneratedColumn> get $columns =>
-      [id, ownedBy, title, content, categoryId, lastmodified];
+      [id, ownedBy, title, content, tagId, created, lastModified];
   @override
   $NotesTable get asDslTable => this;
   @override
@@ -786,19 +869,25 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
     } else if (content.isRequired && isInserting) {
       context.missing(_contentMeta);
     }
-    if (d.categoryId.present) {
-      context.handle(_categoryIdMeta,
-          categoryId.isAcceptableValue(d.categoryId.value, _categoryIdMeta));
-    } else if (categoryId.isRequired && isInserting) {
-      context.missing(_categoryIdMeta);
-    }
-    if (d.lastmodified.present) {
+    if (d.tagId.present) {
       context.handle(
-          _lastmodifiedMeta,
-          lastmodified.isAcceptableValue(
-              d.lastmodified.value, _lastmodifiedMeta));
-    } else if (lastmodified.isRequired && isInserting) {
-      context.missing(_lastmodifiedMeta);
+          _tagIdMeta, tagId.isAcceptableValue(d.tagId.value, _tagIdMeta));
+    } else if (tagId.isRequired && isInserting) {
+      context.missing(_tagIdMeta);
+    }
+    if (d.created.present) {
+      context.handle(_createdMeta,
+          created.isAcceptableValue(d.created.value, _createdMeta));
+    } else if (created.isRequired && isInserting) {
+      context.missing(_createdMeta);
+    }
+    if (d.lastModified.present) {
+      context.handle(
+          _lastModifiedMeta,
+          lastModified.isAcceptableValue(
+              d.lastModified.value, _lastModifiedMeta));
+    } else if (lastModified.isRequired && isInserting) {
+      context.missing(_lastModifiedMeta);
     }
     return context;
   }
@@ -826,12 +915,15 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteDataObject> {
     if (d.content.present) {
       map['content'] = Variable<String, StringType>(d.content.value);
     }
-    if (d.categoryId.present) {
-      map['category_id'] = Variable<String, StringType>(d.categoryId.value);
+    if (d.tagId.present) {
+      map['tag_id'] = Variable<String, StringType>(d.tagId.value);
     }
-    if (d.lastmodified.present) {
-      map['lastmodified'] =
-          Variable<DateTime, DateTimeType>(d.lastmodified.value);
+    if (d.created.present) {
+      map['created'] = Variable<DateTime, DateTimeType>(d.created.value);
+    }
+    if (d.lastModified.present) {
+      map['last_modified'] =
+          Variable<DateTime, DateTimeType>(d.lastModified.value);
     }
     return map;
   }

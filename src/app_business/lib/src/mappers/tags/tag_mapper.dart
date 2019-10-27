@@ -12,6 +12,7 @@ class TagMapperImpl implements TagMapper {
       name: source.name,
       ownedBy: source.ownedBy,
       created: source.created,
+      lastModified: source.lastModified,
     );
   }
 
@@ -22,6 +23,7 @@ class TagMapperImpl implements TagMapper {
       name: source.name,
       ownedBy: source.ownedBy,
       created: source.created,
+      lastModified: source.lastModified,
     );
   }
 }
