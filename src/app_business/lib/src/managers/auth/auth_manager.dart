@@ -50,9 +50,9 @@ class AuthManagerImpl implements AuthManager {
 
   @override
   Future<void> ensureUserSignedIn() async {
-    final accountDO = await _accountRepository.selectSingle();
+    final isCurrenltySignedIn = await _authService.isCurrentlySignedIn();
 
-    if (accountDO != null) {
+    if (isCurrenltySignedIn == true) {
       final googleAccount = await _authService.getCurrentlySignedInAccount();
       final account = _accountMapper.toEntityFromGoogleAccount(googleAccount);
       final accountDO = _accountMapper.toDataObject(account);
