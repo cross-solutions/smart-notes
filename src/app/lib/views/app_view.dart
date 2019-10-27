@@ -34,7 +34,7 @@ class _AppViewState extends ModelBoundState<AppView, AppViewModel> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       navigatorKey: AppViewKeys.navigator,
-      home: SplashWidget(),
+      home: const SplashWidget(),
       builder: (_, widget) => Navigator(
         onGenerateRoute: (_) => MaterialPageRoute(
           builder: (_) => DialogManagerWidget(child: widget),

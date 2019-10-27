@@ -1,3 +1,4 @@
+import 'package:app/resources/resources.dart';
 import 'package:app/service_locator.dart';
 import 'package:app/services/dialog/dialog_service.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,7 @@ class _DialogManagerWidgetState extends State<DialogManagerWidget> {
       context: context,
       builder: (context) {
         return AboutDialog(
-          applicationIcon: FlutterLogo(),
+          applicationIcon: Image.asset(AppImages.im_logo_48),
           applicationVersion: 'v$version, build $buildNumber',
           applicationName: appName,
           applicationLegalese: 'Copyright © 2019 Cross Solutions',

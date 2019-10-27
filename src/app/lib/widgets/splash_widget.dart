@@ -1,3 +1,4 @@
+import 'package:app/resources/resources.dart';
 import 'package:flutter/material.dart';
 
 class SplashWidget extends StatelessWidget {
@@ -7,10 +8,7 @@ class SplashWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          'Splash Screen',
-          style: Theme.of(context).textTheme.display1,
-        ),
+        child: Image.asset(AppImages.im_logo_128),
       ),
     );
   }
