@@ -12,19 +12,18 @@
 			"configurations": [
 				{
 					"name": "App (Dev)",
-					"program": "app/lib/main_dev.dart",
+					"program": "smart_notes/lib/main_dev.dart",
 					"request": "launch",
 					"type": "dart"
 				},
 				{
 					"name": "App (Prod)",
-					"program": "app/lib/main_prod.dart",
+					"program": "smart_notes/lib/main_prod.dart",
 					"request": "launch",
 					"type": "dart"
 				}
 			],
 		},
-		"dart.lineLength": 120,
 		"files.exclude": {
         		"**/.dart_tool": true,
         		"**/.flutter-plugins": true,

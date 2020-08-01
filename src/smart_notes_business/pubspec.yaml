@@ -1,0 +1,22 @@
+name: smart_notes_business
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.8.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  smart_notes_common:
+    path: "../smart_notes_common"
+  smart_notes_data:
+    path: "../smart_notes_data"
+  smart_notes_util:
+    path: "../smart_notes_util"
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^4.1.1
+  pedantic: 1.8.0+1
