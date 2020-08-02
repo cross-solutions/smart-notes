@@ -2,23 +2,14 @@
 	"folders": [
 		{
 			"path": "src"
-		},
-		{
-			"path": "scripts"
 		}
 	],
 	"settings": {
 		"launch": {
 			"configurations": [
 				{
-					"name": "App (Dev)",
-					"program": "smart_notes/lib/main_dev.dart",
-					"request": "launch",
-					"type": "dart"
-				},
-				{
-					"name": "App (Prod)",
-					"program": "smart_notes/lib/main_prod.dart",
+					"name": "Debug",
+					"program": "smart_notes/lib/main.dart",
 					"request": "launch",
 					"type": "dart"
 				}

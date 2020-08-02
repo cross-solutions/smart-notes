@@ -1,5 +1,5 @@
 name: smart_notes
-description: A new Flutter project.
+description: Take down notes, smarter.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -21,6 +21,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   scoped_model: ^1.0.1
   get_it: ^3.0.0+1
   back_button_interceptor: 4.1.1
@@ -33,6 +34,7 @@ dependencies:
   flutter_staggered_animations: ^0.1.2
   intl: ^0.15.8
   package_info: ^0.4.0+10
+  page_transition: ^1.1.6
 
   # Local dependencies
   smart_notes_business:

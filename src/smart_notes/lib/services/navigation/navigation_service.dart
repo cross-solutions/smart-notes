@@ -1,3 +1,4 @@
+import 'package:page_transition/page_transition.dart';
 import 'package:smart_notes/keys/widget_keys.dart';
 import 'package:smart_notes/service_locator.dart';
 import 'package:smart_notes/view_models/view_models.dart';
@@ -38,11 +39,14 @@ class NavigationServiceImpl implements NavigationService {
 
   @override
   Future pushReplacement(String viewName, {Object parameter}) async {
-    _navigator.popUntil((route) => route.isFirst);
-    await _navigator.pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => _getViewAndInitParam(viewName, parameter),
+    return _navigator.pushAndRemoveUntil(
+      PageTransition<void>(
+        type: PageTransitionType.fade,
+        curve: Curves.easeOutSine,
+        duration: Duration(milliseconds: 150),
+        child: _getViewAndInitParam(viewName),
       ),
+      (_) => false,
     );
   }
 

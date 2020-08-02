@@ -1,4 +1,4 @@
-const _tag = 'Cross-Solutions/eNotes';
+const _tag = 'Cross-Solutions/Smart-Notes';
 
 void debugInfo(String message) => print(_getFormattedMessage('INFO', message));
 

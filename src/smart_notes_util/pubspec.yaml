@@ -9,6 +9,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_appcenter_bundle: ^3.2.0+2
+
   smart_notes_common:
     path: "../smart_notes_common"
 
